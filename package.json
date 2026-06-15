@@ -1,0 +1,15 @@
+{
+  "name": "breval-immo-sion",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Brouillon de présentation — site de location Bréval Sàrl (Sion). Statique, Eleventy.",
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "eleventy",
+    "clean": "rm -rf _site"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}
