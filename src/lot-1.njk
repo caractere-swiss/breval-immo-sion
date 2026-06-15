@@ -1,0 +1,113 @@
+---
+layout: base.njk
+title: Le studio — courte durée
+description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un court séjour. ~32 m², tout équipé, dès CHF 120 la nuit.
+---
+
+<section class="hero hero--lot">
+  <div class="hero__media" data-placeholder="Photo principale — studio (séjour lumineux)"></div>
+  <div class="container hero__content hero__content--lot">
+    <p class="eyebrow">Studio · Vieille Ville · Courte durée</p>
+    <h1>Un cocon en vieille ville</h1>
+    <p class="lead">
+      À deux pas des terrasses et des ruelles pavées, ce studio meublé vous accueille
+      le temps d'un séjour à Sion. Lumineux, calme et entièrement équipé.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container layout-2col">
+
+    <div class="prose">
+      <h2>L'esprit des lieux</h2>
+      <p>
+        Niché au deuxième étage d'une maison de caractère, le studio mêle pierre ancienne
+        et confort d'aujourd'hui. Le matin, le soleil entre par la grande fenêtre du séjour ;
+        le soir, la vieille ville s'anime juste en bas. On pose ses valises et on se sent
+        immédiatement chez soi.
+      </p>
+      <p>
+        La cuisine, ouverte sur le coin repas, permet de cuisiner comme à la maison.
+        Le coin nuit, séparé par une verrière, accueille un vrai lit double. Tout a été
+        pensé pour un séjour simple et agréable, que vous veniez pour le travail,
+        un week-end ou un festival.
+      </p>
+
+      <h3>Les équipements</h3>
+      <ul class="features">
+        <li>Lit double (160 cm) &amp; linge fourni</li>
+        <li>Cuisine équipée (plaques, four, lave-vaisselle)</li>
+        <li>Wifi fibre gratuit</li>
+        <li>Salle de douche, sèche-cheveux</li>
+        <li>Lave-linge dans l'immeuble</li>
+        <li>Télévision &amp; enceinte Bluetooth</li>
+        <li>Chauffage individuel</li>
+        <li>Arrivée autonome (boîte à clés)</li>
+      </ul>
+
+      <h3>Le quartier</h3>
+      <p>
+        Vous êtes au centre de Sion : boulangerie et café à moins d'une minute, marché du
+        vendredi à deux pas, château de Valère en toile de fond. La gare CFF se rejoint
+        en dix minutes à pied, les pistes et les vignobles en quelques minutes en voiture.
+      </p>
+    </div>
+
+    {#-
+      BLOC RÉSERVATION — MAQUETTE VISUELLE, NON FONCTIONNELLE.
+      Aucune logique réelle. Le vrai système (MotoPress + Stripe) viendra sur WordPress.
+    -#}
+    <aside class="booking" aria-label="Réservation (aperçu)">
+      <div class="booking__card">
+        <div class="booking__head">
+          <p class="booking__price"><strong>CHF 120</strong> <span>/ nuit</span></p>
+          <p class="booking__rating">★★★★★ <span>Très bien noté</span></p>
+        </div>
+
+        <div class="booking__calendar" aria-hidden="true">
+          <div class="cal__head">
+            <span class="cal__nav">‹</span>
+            <span class="cal__month">Juillet 2026</span>
+            <span class="cal__nav">›</span>
+          </div>
+          <div class="cal__grid cal__grid--dow">
+            <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+          </div>
+          <div class="cal__grid">
+            <span class="cal__pad"></span><span class="cal__pad"></span>
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+            <span>6</span><span>7</span><span class="is-busy">8</span><span class="is-busy">9</span><span class="is-busy">10</span><span>11</span><span>12</span>
+            <span class="is-start">13</span><span class="is-range">14</span><span class="is-range">15</span><span class="is-end">16</span><span>17</span><span>18</span><span>19</span>
+            <span>20</span><span>21</span><span>22</span><span class="is-busy">23</span><span class="is-busy">24</span><span>25</span><span>26</span>
+            <span>27</span><span>28</span><span>29</span><span>30</span><span>31</span>
+          </div>
+        </div>
+
+        <div class="booking__fields">
+          <div class="field">
+            <label>Arrivée</label>
+            <div class="field__fake">lun. 13 juil.</div>
+          </div>
+          <div class="field">
+            <label>Départ</label>
+            <div class="field__fake">jeu. 16 juil.</div>
+          </div>
+          <div class="field">
+            <label>Voyageurs</label>
+            <div class="field__fake">2 personnes</div>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn--primary btn--block" disabled aria-disabled="true">
+          Réserver
+        </button>
+        <p class="booking__note">
+          Aperçu de la future réservation en ligne — bientôt disponible.
+          Pour l'instant, contactez-nous directement.
+        </p>
+      </div>
+    </aside>
+
+  </div>
+</section>
