@@ -1,0 +1,93 @@
+---
+layout: base.njk
+title: L'appartement — bail annuel
+description: Grand 4,5 pièces à Sion, proche gare et HES-SO, idéal colocation étudiante ou famille. Photos disponibles dès fin juillet.
+---
+
+<section class="hero hero--soon">
+  <div class="hero__media hero__media--soon" data-placeholder="Photo à venir — appartement 4,5 pièces">
+    <div class="soon-badge">
+      <span class="soon-badge__dot" aria-hidden="true"></span>
+      Photos disponibles dès fin juillet
+    </div>
+  </div>
+  <div class="container hero__content hero__content--lot">
+    <p class="eyebrow">4,5 pièces · Bail annuel · Sion</p>
+    <h1>Un grand appartement,<br>bientôt en images</h1>
+    <p class="lead">
+      Nous finalisons les derniers aménagements et le reportage photo. En attendant,
+      voici l'essentiel — et un mot pour être prévenu·e en priorité dès la mise en ligne.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container layout-2col">
+
+    <div class="prose">
+      <h2>Ce qui vous attend</h2>
+      <p>
+        Un appartement de 4,5 pièces (~105 m²) clair et bien agencé, parfait pour une
+        colocation d'étudiants ou une famille. Trois chambres, un grand séjour ouvert sur
+        une cuisine moderne, un balcon orienté sud et une cave. L'immeuble, calme et bien
+        entretenu, se trouve à quelques minutes à pied de la gare CFF et de la HES-SO Valais.
+      </p>
+
+      <h3>En bref</h3>
+      <ul class="features">
+        <li>4,5 pièces · ~105 m²</li>
+        <li>3 chambres + séjour ouvert</li>
+        <li>Cuisine équipée récente</li>
+        <li>Balcon plein sud</li>
+        <li>Cave &amp; local vélos</li>
+        <li>Place de parc en option</li>
+        <li>Proche gare CFF (~400 m) &amp; HES-SO</li>
+        <li>Idéal colocation étudiante ou famille</li>
+      </ul>
+
+      <p class="callout">
+        <strong>Loyer indicatif :</strong> dès CHF 1'950 / mois + CHF 300 de charges.
+        Disponible à la rentrée. Bail annuel.
+      </p>
+    </div>
+
+    {#-
+      FORMULAIRE DE CONTACT — non connecté à ce stade.
+      mailto pointe vers une adresse NEUTRE AGENCE (jamais l'email du client),
+      pour qu'aucun mail de test n'arrive chez le client avant validation du brouillon.
+    -#}
+    <aside class="contact" aria-label="Être prévenu de la disponibilité">
+      <div class="contact__card">
+        <h2 class="contact__title">Être prévenu·e en priorité</h2>
+        <p class="contact__intro">
+          Laissez-nous vos coordonnées : nous vous écrivons dès que l'appartement
+          et les photos sont en ligne.
+        </p>
+
+        <form class="contact__form" action="mailto:{{ site.email_agence }}" method="post" enctype="text/plain">
+          <div class="field">
+            <label for="nom">Nom &amp; prénom</label>
+            <input type="text" id="nom" name="Nom" autocomplete="name" placeholder="Marie Dubois">
+          </div>
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="Email" autocomplete="email" placeholder="marie.dubois@example.ch">
+          </div>
+          <div class="field">
+            <label for="tel">Téléphone</label>
+            <input type="tel" id="tel" name="Telephone" autocomplete="tel" placeholder="079 000 00 00">
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="Message" rows="4" placeholder="Quelques mots sur votre projet (dates, nombre de personnes…)"></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary btn--block">Me tenir informé·e</button>
+          <p class="contact__note">
+            Formulaire de démonstration — non connecté pour l'instant.
+          </p>
+        </form>
+      </div>
+    </aside>
+
+  </div>
+</section>
