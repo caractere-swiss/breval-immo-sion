@@ -343,6 +343,11 @@ p { margin: 0 0 1rem; }
   text-align: center; padding: 1rem; color: rgba(255,255,255,0.6); font-size: 0.8rem;
 }
 
+/* Placeholder de contenu rédactionnel (brouillon) — « à définir » */
+.draft { color: var(--muted); font-style: italic; }
+.features li.draft { padding-left: 0; }
+.features li.draft::before { content: ""; }
+
 /* Marqueur « champ à compléter par le client » (chiffres placeholder) */
 .fill {
   background: rgba(200, 113, 78, 0.16);
