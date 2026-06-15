@@ -6,6 +6,9 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`);
 
   return {
+    // Servi sous https://caractere-swiss.github.io/breval-immo-sion/
+    // → tous les liens passés par le filtre `| url` sont préfixés automatiquement.
+    pathPrefix: "/breval-immo-sion/",
     dir: {
       input: "src",
       output: "_site",
