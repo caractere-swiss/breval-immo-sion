@@ -5,7 +5,7 @@ description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un
 ---
 
 <section class="hero hero--lot">
-  <div class="hero__media" data-placeholder="Photo principale — studio (séjour lumineux)"></div>
+  <div class="hero__media hero__media--photo" style="background-image:url('{{ '/assets/img/studio-sejour.jpg' | url }}')"></div>
   <div class="container hero__content hero__content--lot">
     <p class="eyebrow">Studio · Vieille Ville · Courte durée</p>
     <h1>Un cocon en vieille ville</h1>
@@ -16,7 +16,35 @@ description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un
   </div>
 </section>
 
-<section class="section">
+<section class="section section--tight">
+  <div class="container">
+    <div class="gallery" data-gallery>
+      <figure class="gallery__item">
+        <button type="button" class="gallery__btn" data-full="{{ '/assets/img/studio-vie.jpg' | url }}">
+          <img src="{{ '/assets/img/studio-vie.jpg' | url }}" alt="Coin salon du studio (visuel d'illustration)" loading="lazy">
+        </button>
+      </figure>
+      <figure class="gallery__item">
+        <button type="button" class="gallery__btn" data-full="{{ '/assets/img/studio-cuisine.jpg' | url }}">
+          <img src="{{ '/assets/img/studio-cuisine.jpg' | url }}" alt="Cuisine équipée (visuel d'illustration)" loading="lazy">
+        </button>
+      </figure>
+      <figure class="gallery__item">
+        <button type="button" class="gallery__btn" data-full="{{ '/assets/img/studio-coin-nuit.jpg' | url }}">
+          <img src="{{ '/assets/img/studio-coin-nuit.jpg' | url }}" alt="Coin nuit (visuel d'illustration)" loading="lazy">
+        </button>
+      </figure>
+      <figure class="gallery__item">
+        <button type="button" class="gallery__btn" data-full="{{ '/assets/img/studio-salle-eau.jpg' | url }}">
+          <img src="{{ '/assets/img/studio-salle-eau.jpg' | url }}" alt="Salle d'eau (visuel d'illustration)" loading="lazy">
+        </button>
+      </figure>
+    </div>
+    <p class="gallery__note">Visuels d'illustration — les photos réelles du logement seront ajoutées prochainement.</p>
+  </div>
+</section>
+
+<section class="section section--pt0">
   <div class="container layout-2col">
 
     <div class="prose">
@@ -62,7 +90,7 @@ description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un
       <div class="booking__card">
         <div class="booking__head">
           <p class="booking__price"><strong>CHF 120</strong> <span>/ nuit</span></p>
-          <p class="booking__rating">★★★★★ <span>Très bien noté</span></p>
+          <p class="booking__rating">Réservation directe <span>sans frais de plateforme</span></p>
         </div>
 
         <div class="booking__calendar" aria-hidden="true">
