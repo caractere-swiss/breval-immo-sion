@@ -1,0 +1,33 @@
+{#- Footer COMMUN — source unique. Préfigure footer.php (WordPress). -#}
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__brand">
+      <span class="brand__mark">{{ site.name }}</span>
+      <p>{{ site.tagline }}</p>
+    </div>
+
+    <div class="site-footer__col">
+      <h2 class="site-footer__title">Nos logements</h2>
+      <ul>
+        <li><a href="/lot-1/">Le studio — courte durée</a></li>
+        <li><a href="/lot-2/">L'appartement — bail annuel</a></li>
+      </ul>
+    </div>
+
+    <div class="site-footer__col">
+      <h2 class="site-footer__title">Contact</h2>
+      <address>
+        {{ site.legal }}<br>
+        {{ site.address }}<br>
+        <a href="tel:{{ site.phone | replace(' ', '') }}">{{ site.phone }}</a>
+      </address>
+    </div>
+  </div>
+
+  <div class="site-footer__bottom">
+    <div class="container">
+      <p>© {% year %} {{ site.legal }} — Tous droits réservés.</p>
+      <p class="site-footer__credit">Brouillon de présentation · Caractère Communication</p>
+    </div>
+  </div>
+</footer>

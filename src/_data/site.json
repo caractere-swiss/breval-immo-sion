@@ -1,0 +1,16 @@
+{
+  "name": "Bréval",
+  "legal": "Bréval Sàrl",
+  "tagline": "Deux adresses à vivre, au cœur de Sion",
+  "description": "Bréval Sàrl loue deux appartements à Sion : un studio chaleureux pour de courts séjours et un grand appartement familial en bail annuel. Des intérieurs soignés, une gestion de proximité, l'art de se sentir chez soi.",
+  "city": "Sion",
+  "canton": "Valais",
+  "email_agence": "preview@caractere.swiss",
+  "phone": "+41 27 000 00 00",
+  "address": "Rue de Lausanne, 1950 Sion",
+  "nav": [
+    { "label": "Accueil", "url": "/" },
+    { "label": "Le studio", "url": "/lot-1/" },
+    { "label": "L'appartement", "url": "/lot-2/" }
+  ]
+}

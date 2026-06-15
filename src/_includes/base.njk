@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr-CH">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title %}{{ title }} · {% endif %}{{ site.name }} — Location à Sion</title>
+  <meta name="description" content="{{ description or site.description }}">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#0f4c3a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+  {% include "header.njk" %}
+
+  <main id="contenu">
+    {{ content | safe }}
+  </main>
+
+  {% include "footer.njk" %}
+
+  <script src="/assets/js/main.js" defer></script>
+</body>
+</html>
