@@ -2,6 +2,9 @@ module.exports = function (eleventyConfig) {
   // Copie des assets statiques tels quels vers _site/assets
   eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
 
+  // Ne pas traiter les .md des assets comme des pages (ex. CREDITS.md des images)
+  eleventyConfig.ignores.add("src/assets/**/*.md");
+
   // Année courante pour le footer (évite de coder une date en dur)
   eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`);
 
