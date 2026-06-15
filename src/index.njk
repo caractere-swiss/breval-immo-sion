@@ -5,7 +5,7 @@ description: Bréval Sàrl loue deux appartements à Sion — un studio pour de 
 ---
 
 <section class="hero hero--home">
-  <div class="hero__media hero__media--photo" style="background-image:url('{{ '/assets/img/home-hero-sion.jpg' | url }}')"></div>
+  <div class="hero__media" data-placeholder="Emplacement photo — bannière d'accueil"></div>
   <div class="container hero__content">
     <p class="eyebrow">Location · Sion · Valais</p>
     <h1>Deux adresses à vivre,<br>au cœur de Sion</h1>
@@ -26,7 +26,7 @@ description: Bréval Sàrl loue deux appartements à Sion — un studio pour de 
     <div class="lots">
 
       <article class="lot-card">
-        <div class="lot-card__media lot-card__media--photo" style="background-image:url('{{ '/assets/img/studio-sejour.jpg' | url }}')">
+        <div class="lot-card__media" data-placeholder="Photo à venir — le studio">
           <span class="tag tag--accent">Courte durée</span>
         </div>
         <div class="lot-card__body">
@@ -36,15 +36,15 @@ description: Bréval Sàrl loue deux appartements à Sion — un studio pour de 
             à Sion ou un déplacement professionnel. Tout équipé, prêt à vivre dès l'arrivée.
           </p>
           <ul class="lot-card__meta">
-            <li><strong>~32 m²</strong> · 2 personnes</li>
-            <li>Dès <strong>CHF 120</strong> / nuit</li>
+            <li><strong class="fill">[surface] m²</strong> · <span class="fill">[capacité] pers.</span></li>
+            <li>Dès <strong class="fill">[prix] CHF</strong> / nuit</li>
           </ul>
           <a href="{{ '/lot-1/' | url }}" class="link-arrow">Disponibilités &amp; réservation</a>
         </div>
       </article>
 
       <article class="lot-card">
-        <div class="lot-card__media lot-card__media--photo lot-card__media--soon" style="background-image:url('{{ '/assets/img/lot2-ambiance.jpg' | url }}')">
+        <div class="lot-card__media lot-card__media--soon" data-placeholder="Photo à venir — l'appartement">
           <span class="tag">Bientôt disponible</span>
         </div>
         <div class="lot-card__body">
@@ -54,8 +54,8 @@ description: Bréval Sàrl loue deux appartements à Sion — un studio pour de 
             ou une famille. Proche de la gare et de la HES-SO. Photos en ligne dès fin juillet.
           </p>
           <ul class="lot-card__meta">
-            <li><strong>~105 m²</strong> · 4,5 pièces</li>
-            <li>Dès <strong>CHF 1'950</strong> / mois + charges</li>
+            <li><strong class="fill">[surface] m²</strong> · <span class="fill">[nb] pièces</span></li>
+            <li>Dès <strong class="fill">[loyer] CHF</strong> / mois + charges</li>
           </ul>
           <a href="{{ '/lot-2/' | url }}" class="link-arrow">En savoir plus</a>
         </div>

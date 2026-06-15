@@ -332,6 +332,26 @@ p { margin: 0 0 1rem; }
 .gallery__btn:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 2px; }
 .gallery__note { margin-top: 0.9rem; font-size: 0.82rem; color: var(--muted); font-style: italic; }
 
+/* Tuiles placeholder de galerie (sans image) */
+.gallery__ph {
+  aspect-ratio: 4 / 3; border-radius: var(--radius-sm); position: relative; overflow: hidden;
+  background: linear-gradient(135deg, var(--green-700), var(--green-900)); box-shadow: var(--shadow-sm);
+}
+.gallery__ph[data-placeholder]::after {
+  content: attr(data-placeholder); position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 1rem; color: rgba(255,255,255,0.6); font-size: 0.8rem;
+}
+
+/* Marqueur « champ à compléter par le client » (chiffres placeholder) */
+.fill {
+  background: rgba(200, 113, 78, 0.16);
+  border-bottom: 1px dashed var(--terracotta);
+  border-radius: 3px; padding: 0 0.3em;
+  font-style: normal; font-weight: 600; color: var(--terracotta-dark);
+  white-space: nowrap;
+}
+
 /* ---------- Lightbox ---------- */
 .lightbox {
   position: fixed; inset: 0; z-index: 100;

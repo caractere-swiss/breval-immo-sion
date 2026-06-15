@@ -1,11 +1,11 @@
 ---
 layout: base.njk
 title: Le studio — courte durée
-description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un court séjour. ~32 m², tout équipé, dès CHF 120 la nuit.
+description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un court séjour. Tout équipé.
 ---
 
 <section class="hero hero--lot">
-  <div class="hero__media hero__media--photo" style="background-image:url('{{ '/assets/img/studio-sejour.jpg' | url }}')"></div>
+  <div class="hero__media" data-placeholder="Emplacement photo — bannière du studio"></div>
   <div class="container hero__content hero__content--lot">
     <p class="eyebrow">Studio · Vieille Ville · Courte durée</p>
     <h1>Un cocon en vieille ville</h1>
@@ -18,29 +18,13 @@ description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un
 
 <section class="section section--tight">
   <div class="container">
-    <div class="gallery" data-gallery>
-      <figure class="gallery__item">
-        <button type="button" class="gallery__btn" data-full="{{ '/assets/img/studio-vie.jpg' | url }}">
-          <img src="{{ '/assets/img/studio-vie.jpg' | url }}" alt="Coin salon du studio (visuel d'illustration)" loading="lazy">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button type="button" class="gallery__btn" data-full="{{ '/assets/img/studio-cuisine.jpg' | url }}">
-          <img src="{{ '/assets/img/studio-cuisine.jpg' | url }}" alt="Cuisine équipée (visuel d'illustration)" loading="lazy">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button type="button" class="gallery__btn" data-full="{{ '/assets/img/studio-coin-nuit.jpg' | url }}">
-          <img src="{{ '/assets/img/studio-coin-nuit.jpg' | url }}" alt="Coin nuit (visuel d'illustration)" loading="lazy">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button type="button" class="gallery__btn" data-full="{{ '/assets/img/studio-salle-eau.jpg' | url }}">
-          <img src="{{ '/assets/img/studio-salle-eau.jpg' | url }}" alt="Salle d'eau (visuel d'illustration)" loading="lazy">
-        </button>
-      </figure>
+    <div class="gallery">
+      <figure class="gallery__item"><div class="gallery__ph" data-placeholder="Photo à venir — séjour"></div></figure>
+      <figure class="gallery__item"><div class="gallery__ph" data-placeholder="Photo à venir — cuisine"></div></figure>
+      <figure class="gallery__item"><div class="gallery__ph" data-placeholder="Photo à venir — coin nuit"></div></figure>
+      <figure class="gallery__item"><div class="gallery__ph" data-placeholder="Photo à venir — salle d'eau"></div></figure>
     </div>
-    <p class="gallery__note">Visuels d'illustration — les photos réelles du logement seront ajoutées prochainement.</p>
+    <p class="gallery__note">Emplacements photos — les visuels du logement seront ajoutés ici.</p>
   </div>
 </section>
 
@@ -50,7 +34,7 @@ description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un
     <div class="prose">
       <h2>L'esprit des lieux</h2>
       <p>
-        Niché au deuxième étage d'une maison de caractère, le studio mêle pierre ancienne
+        Niché dans une maison de caractère, le studio mêle pierre ancienne
         et confort d'aujourd'hui. Le matin, le soleil entre par la grande fenêtre du séjour ;
         le soir, la vieille ville s'anime juste en bas. On pose ses valises et on se sent
         immédiatement chez soi.
@@ -64,7 +48,7 @@ description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un
 
       <h3>Les équipements</h3>
       <ul class="features">
-        <li>Lit double (160 cm) &amp; linge fourni</li>
+        <li>Lit double (<span class="fill">[larg.] cm</span>) &amp; linge fourni</li>
         <li>Cuisine équipée (plaques, four, lave-vaisselle)</li>
         <li>Wifi fibre gratuit</li>
         <li>Salle de douche, sèche-cheveux</li>
@@ -76,9 +60,9 @@ description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un
 
       <h3>Le quartier</h3>
       <p>
-        Vous êtes au centre de Sion : boulangerie et café à moins d'une minute, marché du
+        Vous êtes au centre de Sion : boulangerie et café à <span class="fill">[durée]</span> à pied, marché du
         vendredi à deux pas, château de Valère en toile de fond. La gare CFF se rejoint
-        en dix minutes à pied, les pistes et les vignobles en quelques minutes en voiture.
+        en <span class="fill">[durée]</span> à pied, les pistes et les vignobles en quelques minutes en voiture.
       </p>
     </div>
 
@@ -89,7 +73,7 @@ description: Studio meublé au cœur de la vieille ville de Sion, idéal pour un
     <aside class="booking" aria-label="Réservation (aperçu)">
       <div class="booking__card">
         <div class="booking__head">
-          <p class="booking__price"><strong>CHF 120</strong> <span>/ nuit</span></p>
+          <p class="booking__price"><strong class="fill">[prix] CHF</strong> <span>/ nuit</span></p>
           <p class="booking__rating">Réservation directe <span>sans frais de plateforme</span></p>
         </div>
 
