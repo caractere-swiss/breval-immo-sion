@@ -16,9 +16,7 @@
   la lightbox JS existante (`data-gallery` + `data-full`), carte accueil
   (`lot1-sejour.jpg`). CSS ajouté pour `<img>` dans `.hero__media` et
   `.lot-card__media` (object-fit cover). `pathPrefix` appliqué via `| url`. ✓
-  ⚠️ Les images ne sont pas encore dans le repo Git — les fichiers
-  `src/assets/images/lot-1/lot1-*.jpg` doivent être committés/poussés depuis
-  la machine locale pour que les photos s'affichent sur le brouillon en ligne.
+  ✓ Photos poussées par Ilias via GitHub web UI.
 
 - 2026-06-25 — **Intégration contenu réel de Luc** (mails 19.06 + arbitrages
   Ilias 25.06). Lot fait d'un bloc, poussé sur `main` :
@@ -64,9 +62,9 @@
 ## 3. Blocages & questions
 > Ce que Claude Code remonte au chat Web.
 
-Aucun blocage. En attente du contenu de Luc (textes, chiffres, photos fin
-juillet, coordonnées agence) pour remplir les placeholders `.fill` / `.draft`
-et `src/_data/site.json`.
+Aucun blocage. Contenu Lot 1 entièrement intégré.
+En attente : photos Lot 2 (fin juillet) + textes `.draft` Lot 1
+(intro, description, quartier, équipements).
 
 ---
 
