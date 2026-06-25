@@ -1,20 +1,85 @@
 ---
 layout: base.njk
-title: L'appartement — bail annuel
-description: Grand appartement à Sion, proche gare et HES-SO, idéal colocation étudiante ou famille. Photos disponibles dès fin juillet.
+title: Location longue durée — Colocation à Sion
+description: Colocation meublée de 128 m² à Sion, à 250 m de la gare CFF. 4 chambres dès 650 CHF/mois charges comprises. Disponible le 1er septembre 2026. Photos dès fin juillet.
 ---
 
 <section class="hero hero--soon">
-  <div class="hero__media hero__media--soon" data-placeholder="Emplacement photo — l'appartement">
+  <div class="hero__media hero__media--soon" data-placeholder="Emplacement photo — la colocation">
     <div class="soon-badge">
       <span class="soon-badge__dot" aria-hidden="true"></span>
       Photos disponibles dès fin juillet
     </div>
   </div>
   <div class="container hero__content hero__content--lot">
-    <p class="eyebrow"><span class="fill">[nb] pièces</span> · Bail annuel · Sion</p>
-    <h1>L'appartement — bail annuel</h1>
-    <p class="lead">Texte d'introduction à définir.</p>
+    <p class="eyebrow">Colocation · 4 chambres · Disponible 1er septembre</p>
+    <h1>Location longue durée — Colocation à Sion</h1>
+    <p class="lead">4 chambres meublées, charges comprises, à 250 m de la gare CFF.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="prose">
+      <h2>L'appartement</h2>
+      <p>
+        Appartement en colocation de 128 m², à 250 m de la gare CFF.
+        4 chambres meublées, charges comprises. En travaux — visitable sur demande.
+      </p>
+      <p class="callout">
+        <strong>Disponible :</strong> 1<sup>er</sup> septembre 2026 ·
+        Loyers dès 650 CHF / mois charges comprises.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--muted">
+  <div class="container">
+    <h2>Les chambres</h2>
+    <div class="lots">
+
+      <article class="lot-card">
+        <div class="lot-card__body">
+          <h3>Chambre 1</h3>
+          <ul class="lot-card__meta">
+            <li><strong>9,15 m²</strong></li>
+            <li><strong>650 CHF</strong> / mois cc</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="lot-card">
+        <div class="lot-card__body">
+          <h3>Chambre 2</h3>
+          <ul class="lot-card__meta">
+            <li><strong>10,5 m²</strong></li>
+            <li><strong>720 CHF</strong> / mois cc</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="lot-card">
+        <div class="lot-card__body">
+          <h3>Chambre 3</h3>
+          <ul class="lot-card__meta">
+            <li><strong>17,20 m²</strong></li>
+            <li><strong>950 CHF</strong> / mois cc</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="lot-card">
+        <div class="lot-card__body">
+          <h3>Chambre 4</h3>
+          <ul class="lot-card__meta">
+            <li><strong>25,8 m²</strong> + terrasse 5,8 m²</li>
+            <li><strong>1 180 CHF</strong> / mois cc</li>
+          </ul>
+        </div>
+      </article>
+
+    </div>
   </div>
 </section>
 
@@ -22,21 +87,15 @@ description: Grand appartement à Sion, proche gare et HES-SO, idéal colocation
   <div class="container layout-2col">
 
     <div class="prose">
-      <h2>Description</h2>
-      <p class="draft">Description du logement à définir.</p>
-
-      <h3>En bref</h3>
+      <h2>Parties communes</h2>
       <ul class="features">
-        <li><span class="fill">[nb] pièces</span> · <span class="fill">[surface] m²</span></li>
-        <li><span class="fill">[nb] chambres</span></li>
-        <li>Proche gare CFF (<span class="fill">[distance]</span>) &amp; HES-SO</li>
-        <li class="draft">Autres caractéristiques à définir</li>
+        <li>Hall d'entrée</li>
+        <li>Couloir</li>
+        <li>Salle de bain</li>
+        <li>WC</li>
+        <li>Salon</li>
+        <li>Cuisine aménagée et équipée (lave-vaisselle, lave-linge)</li>
       </ul>
-
-      <p class="callout">
-        <strong>Loyer indicatif :</strong> dès <span class="fill">[loyer] CHF</span> / mois + <span class="fill">[charges] CHF</span> de charges.
-        Disponible à la rentrée. Bail annuel.
-      </p>
     </div>
 
     {#-
@@ -48,7 +107,7 @@ description: Grand appartement à Sion, proche gare et HES-SO, idéal colocation
       <div class="contact__card">
         <h2 class="contact__title">Être prévenu·e en priorité</h2>
         <p class="contact__intro">
-          Laissez-nous vos coordonnées : nous vous écrivons dès que l'appartement
+          Laissez-nous vos coordonnées : nous vous écrivons dès que la colocation
           et les photos sont en ligne.
         </p>
 
@@ -67,7 +126,7 @@ description: Grand appartement à Sion, proche gare et HES-SO, idéal colocation
           </div>
           <div class="field">
             <label for="message">Message</label>
-            <textarea id="message" name="Message" rows="4" placeholder="Quelques mots sur votre projet (dates, nombre de personnes…)"></textarea>
+            <textarea id="message" name="Message" rows="4" placeholder="Quelques mots sur votre projet (chambre souhaitée, date d'entrée…)"></textarea>
           </div>
           <button type="submit" class="btn btn--primary btn--block">Me tenir informé·e</button>
           <p class="contact__note">

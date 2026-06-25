@@ -6,11 +6,10 @@
   "city": "Sion",
   "canton": "Valais",
   "email_agence": "preview@caractere.swiss",
-  "phone": "+41 27 000 00 00",
   "address": "Rue de Lausanne, 1950 Sion",
   "nav": [
     { "label": "Accueil", "url": "/" },
-    { "label": "Le studio", "url": "/lot-1/" },
-    { "label": "L'appartement", "url": "/lot-2/" }
+    { "label": "Courte durée", "url": "/lot-1/" },
+    { "label": "Longue durée", "url": "/lot-2/" }
   ]
 }

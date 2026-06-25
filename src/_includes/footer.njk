@@ -9,8 +9,8 @@
     <div class="site-footer__col">
       <h2 class="site-footer__title">Nos logements</h2>
       <ul>
-        <li><a href="{{ '/lot-1/' | url }}">Le studio — courte durée</a></li>
-        <li><a href="{{ '/lot-2/' | url }}">L'appartement — bail annuel</a></li>
+        <li><a href="{{ '/lot-1/' | url }}">Location courte durée</a></li>
+        <li><a href="{{ '/lot-2/' | url }}">Location longue durée — colocation</a></li>
       </ul>
     </div>
 
@@ -18,8 +18,7 @@
       <h2 class="site-footer__title">Contact</h2>
       <address>
         {{ site.legal }}<br>
-        {{ site.address }}<br>
-        <a href="tel:{{ site.phone | replace(' ', '') }}">{{ site.phone }}</a>
+        {{ site.address }}
       </address>
     </div>
   </div>
