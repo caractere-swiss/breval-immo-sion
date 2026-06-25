@@ -11,6 +11,15 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-06-25 — **Intégration photos Lot 1** : hero bannière (`lot1-balcon-vue-alpes.jpg`),
+  galerie 4 images (séjour, cuisine, chambre double, salle de bain) branchée sur
+  la lightbox JS existante (`data-gallery` + `data-full`), carte accueil
+  (`lot1-sejour.jpg`). CSS ajouté pour `<img>` dans `.hero__media` et
+  `.lot-card__media` (object-fit cover). `pathPrefix` appliqué via `| url`. ✓
+  ⚠️ Les images ne sont pas encore dans le repo Git — les fichiers
+  `src/assets/images/lot-1/lot1-*.jpg` doivent être committés/poussés depuis
+  la machine locale pour que les photos s'affichent sur le brouillon en ligne.
+
 - 2026-06-25 — **Intégration contenu réel de Luc** (mails 19.06 + arbitrages
   Ilias 25.06). Lot fait d'un bloc, poussé sur `main` :
   - `src/_data/site.json` : champ `phone` supprimé ; nav renommée

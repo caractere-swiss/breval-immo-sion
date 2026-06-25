@@ -5,7 +5,9 @@ description: Appartement meublé de 68 m² à Sion pour de courts séjours, à 3
 ---
 
 <section class="hero hero--lot">
-  <div class="hero__media" data-placeholder="Emplacement photo — bannière du studio"></div>
+  <div class="hero__media">
+    <img src="{{ '/assets/images/lot-1/lot1-balcon-vue-alpes.jpg' | url }}" alt="Vue depuis le balcon — Sion et les Alpes">
+  </div>
   <div class="container hero__content hero__content--lot">
     <p class="eyebrow">Appartement · Courte durée · Sion</p>
     <h1>Location courte durée — Sion</h1>
@@ -15,13 +17,29 @@ description: Appartement meublé de 68 m² à Sion pour de courts séjours, à 3
 
 <section class="section section--tight">
   <div class="container">
-    <div class="gallery">
-      <figure class="gallery__item"><div class="gallery__ph" data-placeholder="Photo à venir — séjour"></div></figure>
-      <figure class="gallery__item"><div class="gallery__ph" data-placeholder="Photo à venir — cuisine"></div></figure>
-      <figure class="gallery__item"><div class="gallery__ph" data-placeholder="Photo à venir — coin nuit"></div></figure>
-      <figure class="gallery__item"><div class="gallery__ph" data-placeholder="Photo à venir — salle d'eau"></div></figure>
+    <div class="gallery" data-gallery>
+      <figure class="gallery__item">
+        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-sejour.jpg' | url }}">
+          <img src="{{ '/assets/images/lot-1/lot1-sejour.jpg' | url }}" alt="Le séjour">
+        </button>
+      </figure>
+      <figure class="gallery__item">
+        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-cuisine-facade.jpg' | url }}">
+          <img src="{{ '/assets/images/lot-1/lot1-cuisine-facade.jpg' | url }}" alt="La cuisine">
+        </button>
+      </figure>
+      <figure class="gallery__item">
+        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-chambre-double-1.jpg' | url }}">
+          <img src="{{ '/assets/images/lot-1/lot1-chambre-double-1.jpg' | url }}" alt="La chambre double">
+        </button>
+      </figure>
+      <figure class="gallery__item">
+        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-salle-de-bain.jpg' | url }}">
+          <img src="{{ '/assets/images/lot-1/lot1-salle-de-bain.jpg' | url }}" alt="La salle de bain">
+        </button>
+      </figure>
     </div>
-    <p class="gallery__note">Emplacements photos — les visuels du logement seront ajoutés ici.</p>
+    <p class="gallery__note">Cliquez sur une photo pour l'agrandir.</p>
   </div>
 </section>
 
