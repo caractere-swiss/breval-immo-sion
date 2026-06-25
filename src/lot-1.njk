@@ -19,74 +19,79 @@ og_image: /assets/images/lot-1/lot1-balcon-vue-alpes.jpg
 
 <section class="section section--tight">
   <div class="container">
-    <div class="gallery" data-gallery>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-sejour.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-sejour.jpg' | url }}" alt="Le séjour">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-sejour-lit-escamotable.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-sejour-lit-escamotable.jpg' | url }}" alt="Le séjour — lit escamotable">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-salle-a-manger-cuisine.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-salle-a-manger-cuisine.jpg' | url }}" alt="La salle à manger et cuisine">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-cuisine-facade.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-cuisine-facade.jpg' | url }}" alt="La cuisine">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-cuisine-ilot.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-cuisine-ilot.jpg' | url }}" alt="La cuisine — îlot central">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-cuisine-lave-vaisselle.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-cuisine-lave-vaisselle.jpg' | url }}" alt="La cuisine — lave-vaisselle">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-chambre-double-1.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-chambre-double-1.jpg' | url }}" alt="Chambre double">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-chambre-double-2.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-chambre-double-2.jpg' | url }}" alt="Chambre double — vue 2">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-chambre-simple.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-chambre-simple.jpg' | url }}" alt="Chambre simple">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-salle-de-bain.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-salle-de-bain.jpg' | url }}" alt="La salle de bain">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-hall-entree.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-hall-entree.jpg' | url }}" alt="Le hall d'entrée">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-entree-couloir.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-entree-couloir.jpg' | url }}" alt="L'entrée et le couloir">
-        </button>
-      </figure>
-      <figure class="gallery__item">
-        <button class="gallery__btn" type="button" data-full="{{ '/assets/images/lot-1/lot1-balcon-vue-alpes.jpg' | url }}">
-          <img src="{{ '/assets/images/lot-1/lot1-balcon-vue-alpes.jpg' | url }}" alt="Le balcon — vue sur les Alpes">
-        </button>
-      </figure>
+    <div class="slider" data-gallery>
+      <div class="slider__track">
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-sejour.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-sejour.jpg' | url }}" alt="Le séjour">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-sejour-lit-escamotable.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-sejour-lit-escamotable.jpg' | url }}" alt="Le séjour — lit escamotable">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-salle-a-manger-cuisine.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-salle-a-manger-cuisine.jpg' | url }}" alt="La salle à manger et cuisine">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-cuisine-facade.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-cuisine-facade.jpg' | url }}" alt="La cuisine">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-cuisine-ilot.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-cuisine-ilot.jpg' | url }}" alt="La cuisine — îlot central">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-cuisine-lave-vaisselle.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-cuisine-lave-vaisselle.jpg' | url }}" alt="La cuisine — lave-vaisselle">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-chambre-double-1.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-chambre-double-1.jpg' | url }}" alt="Chambre double">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-chambre-double-2.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-chambre-double-2.jpg' | url }}" alt="Chambre double — vue 2">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-chambre-simple.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-chambre-simple.jpg' | url }}" alt="Chambre simple">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-salle-de-bain.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-salle-de-bain.jpg' | url }}" alt="La salle de bain">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-hall-entree.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-hall-entree.jpg' | url }}" alt="Le hall d'entrée">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-entree-couloir.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-entree-couloir.jpg' | url }}" alt="L'entrée et le couloir">
+          </button>
+        </figure>
+        <figure class="slider__slide">
+          <button type="button" data-full="{{ '/assets/images/lot-1/lot1-balcon-vue-alpes.jpg' | url }}">
+            <img src="{{ '/assets/images/lot-1/lot1-balcon-vue-alpes.jpg' | url }}" alt="Le balcon — vue sur les Alpes">
+          </button>
+        </figure>
+      </div>
+      <button class="slider__arrow slider__arrow--prev" type="button" aria-label="Photo précédente">‹</button>
+      <button class="slider__arrow slider__arrow--next" type="button" aria-label="Photo suivante">›</button>
+      <p class="slider__counter" aria-live="polite">1 / 13</p>
     </div>
-    <p class="gallery__note">Cliquez sur une photo pour l'agrandir.</p>
+    <p class="gallery__note">Faites défiler · Cliquez pour agrandir.</p>
   </div>
 </section>
 
