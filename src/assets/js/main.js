@@ -35,9 +35,11 @@
     box.setAttribute("aria-modal", "true");
     box.innerHTML =
       '<button type="button" class="lightbox__close" aria-label="Fermer">×</button>' +
-      '<button type="button" class="lightbox__prev" aria-label="Précédent">‹</button>' +
-      '<img alt="">' +
-      '<button type="button" class="lightbox__next" aria-label="Suivant">›</button>';
+      '<div class="lightbox__inner">' +
+        '<img alt="">' +
+        '<button type="button" class="lightbox__prev" aria-label="Précédent">‹</button>' +
+        '<button type="button" class="lightbox__next" aria-label="Suivant">›</button>' +
+      '</div>';
     document.body.appendChild(box);
     var boxImg = box.querySelector("img");
 
