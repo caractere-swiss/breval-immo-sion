@@ -373,7 +373,7 @@ p { margin: 0 0 1rem; }
   flex: 0 0 auto;
   width: clamp(220px, 29vw, 380px);
   aspect-ratio: 4 / 3;
-  border-radius: var(--radius-sm); overflow: hidden;
+  overflow: hidden;
 }
 .marquee__item button {
   display: block; width: 100%; height: 100%;
