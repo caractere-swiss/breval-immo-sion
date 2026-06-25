@@ -12,7 +12,7 @@ Brouillon visuel **statique** du site de location de **Bréval Sàrl** (sociét�
 - [Eleventy (11ty)](https://www.11ty.dev/) — générateur de site statique.
 - Header / footer **mutualisés** dans `src/_includes/` (préfigure les futurs `header.php` / `footer.php`).
 - Contenu de navigation et coordonnées centralisés dans `src/_data/site.json`.
-- Hébergement preview : **Vercel** (déploiement automatique à chaque push sur `main`).
+- Hébergement preview : **GitHub Pages** (déploiement automatique à chaque push sur `main`).
 
 ## Pages
 
@@ -37,5 +37,7 @@ npm run build      # génère _site/
 
 ## Déploiement
 
-Le repo est connecté à un projet **Vercel**. Chaque push sur `main` redéploie automatiquement
-l'URL de preview. Configuration dans `vercel.json`.
+Le repo déploie sur **GitHub Pages** via `.github/workflows/deploy.yml`. Chaque push sur `main`
+déclenche un build Eleventy et publie `_site/` automatiquement.
+
+URL live : https://caractere-swiss.github.io/breval-immo-sion/

@@ -11,45 +11,30 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-06-25 — Nettoyage hygiène : `vercel.json` supprimé (code mort, déploiement
+  Vercel jamais utilisé). `README.md` corrigé : section Déploiement → GitHub Pages
+  + URL live. Merge `claude/lucid-cray-exfjaj` → `main` effectué. Le chat Web
+  peut désormais cloner `main` et lire `CLAUDE.md` + `PILOTAGE-WEB.md`.
+  GitHub Pages se redéclenche à chaque push `main`. ✓
+  **Note sur le mode cloud** : les sessions Claude Code cloud créent une branche
+  par session (ex. `claude/lucid-cray-…`). Schéma retenu : développement sur
+  branche de session → merge vers `main` après feu vert. Disciplines de branches
+  en phase WordPress uniquement.
+
 - 2026-06-25 — Setup coordination terminé : `CLAUDE.md` (contexte projet
   consolidé) + `PILOTAGE-WEB.md` créés et committés à la racine.
-  **Vérifications demandées (étape 3) :**
-  - ✓ **Emplacement** : racine hors `src/`. `.eleventy.js` a `input: "src"`,
-    donc `CLAUDE.md` et `PILOTAGE-WEB.md` sont ignorés par le build → jamais
-    dans `_site/` ni sur le brouillon en ligne.
-  - ✓ **Convention commits** : `docs(pilotage):` pour les mises à jour de
-    `PILOTAGE-WEB.md`, repérables en log.
-  - ⚠️ **Déploiement** : le déclenchement « push sur `main` → redéploiement »
-    est exact (workflow `.github/workflows/deploy.yml`, déploie sur push
-    `main`), MAIS c'est **GitHub Pages, pas Vercel** (cf. §3). Je travaille
-    actuellement sur la branche `claude/lucid-cray-exfjaj`, pas `main` :
-    ces fichiers ne sont donc PAS encore sur `main` (cf. §3, point bloquant).
+  - ✓ Racine hors `src/` → hors build Eleventy, jamais publié.
+  - ✓ Convention commits `docs(pilotage):` en place.
+  - ✓ Déploiement = GitHub Pages (pas Vercel).
+
 - 2026-06-25 — Initialisation du fichier de pilotage.
 
 ## 3. Blocages & questions
 > Ce que Claude Code remonte au chat Web.
 
-1. **Branche de travail vs `main` (à arbitrer).** Cette session Claude Code
-   est contrainte de développer/pousser sur la branche `claude/lucid-cray-exfjaj`,
-   pas sur `main`. Conséquences :
-   - GitHub Pages ne se redéploie PAS (le workflow ne déclenche que sur `main`).
-   - Le chat Web qui clone la branche **par défaut (`main`)** ne verra ni
-     `CLAUDE.md` ni `PILOTAGE-WEB.md`.
-   - **Décision attendue (via Ilias) :** soit (a) on fusionne
-     `claude/lucid-cray-exfjaj` → `main` (j'ai besoin d'un feu vert explicite
-     pour pousser/merger sur `main`), soit (b) le chat Web clone et lit la
-     branche `claude/lucid-cray-exfjaj` au lieu de `main`. Je recommande (a)
-     pour garder le contexte sur `main` accessible à toutes les sessions.
-
-2. **README.md / vercel.json périmés.** Ils décrivent un déploiement **Vercel**,
-   alors que la cible actée est **GitHub Pages** (`deploy.yml`). Source de
-   confusion potentielle. Je propose de corriger le README (section
-   Déploiement) et de supprimer `vercel.json` — **j'attends un OK** avant d'y
-   toucher.
-
-3. **Pas d'autre blocage technique.** Site preview complet, en attente du
-   contenu de Luc (textes, chiffres, photos fin juillet, coordonnées agence)
-   pour remplir les placeholders `.fill` / `.draft` et `src/_data/site.json`.
+Aucun blocage. En attente du contenu de Luc (textes, chiffres, photos fin
+juillet, coordonnées agence) pour remplir les placeholders `.fill` / `.draft`
+et `src/_data/site.json`.
 
 ---
 
