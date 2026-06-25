@@ -23,30 +23,6 @@
     });
   }
 
-  // Slider galerie — flèches prev/next + compteur.
-  var sliderEl = document.querySelector(".slider");
-  if (sliderEl) {
-    var track = sliderEl.querySelector(".slider__track");
-    var slides = sliderEl.querySelectorAll(".slider__slide");
-    var counter = sliderEl.querySelector(".slider__counter");
-    var total = slides.length;
-    var current = 0;
-
-    function slideTo(index) {
-      current = Math.max(0, Math.min(index, total - 1));
-      track.scrollTo({ left: current * track.clientWidth, behavior: "smooth" });
-      if (counter) counter.textContent = (current + 1) + " / " + total;
-    }
-
-    sliderEl.querySelector(".slider__arrow--prev").addEventListener("click", function () { slideTo(current - 1); });
-    sliderEl.querySelector(".slider__arrow--next").addEventListener("click", function () { slideTo(current + 1); });
-
-    track.addEventListener("scroll", function () {
-      var idx = Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
-      if (idx !== current) { current = idx; if (counter) counter.textContent = (current + 1) + " / " + total; }
-    }, { passive: true });
-  }
-
   // Lightbox de la galerie (Lot 1) — agrandissement des visuels au clic.
   var gallery = document.querySelector("[data-gallery]");
   if (gallery) {
