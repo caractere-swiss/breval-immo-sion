@@ -363,7 +363,7 @@ p { margin: 0 0 1rem; }
 /* ---------- Marquee galerie (défilement auto) ---------- */
 .marquee { overflow: hidden; }
 .marquee__track {
-  display: flex; gap: 0;
+  display: flex; gap: 4px;
   width: max-content;
   animation: marquee-scroll 55s linear infinite;
   will-change: transform;
@@ -373,7 +373,7 @@ p { margin: 0 0 1rem; }
   flex: 0 0 auto;
   width: clamp(220px, 29vw, 380px);
   aspect-ratio: 4 / 3;
-  overflow: hidden;
+  border-radius: var(--radius-sm); overflow: hidden;
 }
 .marquee__item button {
   display: block; width: 100%; height: 100%;
