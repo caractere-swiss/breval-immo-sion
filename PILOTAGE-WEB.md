@@ -11,6 +11,35 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-09 — **HANDOFF / consolidation** (rattrapage du journal, resté figé à
+  `5375b2a`). État actuel de `main` = commit `c07d669`, HEAD. `main` local et
+  remote strictement alignés (aucune divergence) → clone `main` = état complet,
+  fusion sans risque. Commits couverts par cette entrée (`a2c733e` → `c07d669`) :
+  - **`a2c733e`** — Balises **Open Graph** (`base.njk` : og:type/title/description/
+    url/image ; `og:url` = `{{ site.url }}{{ page.url | url }}` avec pathPrefix ;
+    `site.url` ajouté à `site.json`). **Galerie Lot 1 complète** = 13 photos réelles.
+  - **`30a0ef9`** — **Textes Lot 1 rédigés** (remplacent les `.draft`) : lead,
+    description (2 §), quartier. Équipements : cuisine + balcon confirmés ;
+    **reste `.draft`** = « Wi-Fi · Télévision (à confirmer) » (1 ligne, en attente Luc).
+  - **`39e30aa` → `d2f8cd2`** — Évolution galerie : grid → slider scroll-snap
+    (**rejeté** par Ilias « j'aime pas ») → **marquee** défilement auto continu
+    (choix final). CSS `.marquee` : 13 items + 13 doublons `aria-hidden` pour
+    boucle sans couture (`translateX(-50%)`), gap 4px, `border-radius` conservé,
+    `prefers-reduced-motion` respecté.
+  - **`d111d9f`** — **Lightbox navigable** (`main.js`) : flèches ‹ › + clavier ← →,
+    boucle sur les 13 photos (doublons exclus). **Homepage** : image carte Lot 1
+    cliquable (→ `/lot-1/`) ; **descriptions cartes Lot 1 + Lot 2 rédigées**
+    (remplacent `.draft`). **Correction couchages Lot 1** : mention « chambre
+    simple » retirée de la description prose (cohérence 5 pers. = 2+2+1).
+    ⚠️ **En attente confirmation Luc** sur la config exacte des couchages ;
+    capacité (5 pers.) et « En bref » inchangés.
+  - **`6185fae` / `9cc5ef9`** — Hero : dégradé vert remonté (démarre à 15%, opaque
+    à 52%) pour lisibilité de l'eyebrow sur photo. Lightbox : flèches « verre »
+    (backdrop-filter, ton vert thème) posées sur l'image → image pleine largeur
+    mobile.
+  - **`37cca50` / `c07d669`** — Réglage fin marquee : gap 4px + `border-radius`
+    restauré (images resserrées mais coins arrondis nets aux jointures).
+
 - 2026-06-25 — **Intégration photos Lot 1** : hero bannière (`lot1-balcon-vue-alpes.jpg`),
   galerie 4 images (séjour, cuisine, chambre double, salle de bain) branchée sur
   la lightbox JS existante (`data-gallery` + `data-full`), carte accueil
@@ -62,9 +91,15 @@
 ## 3. Blocages & questions
 > Ce que Claude Code remonte au chat Web.
 
-Aucun blocage. Contenu Lot 1 entièrement intégré.
-En attente : photos Lot 2 (fin juillet) + textes `.draft` Lot 1
-(intro, description, quartier, équipements).
+Aucun blocage technique. `main` = `c07d669`, propre, déployé (GitHub Pages).
+En attente de Luc (3 points seulement) :
+- **Wi-Fi / Télévision Lot 1** : 1 ligne `.draft` restante dans `lot-1.njk`
+  (équipements). À confirmer/infirmer.
+- **Config couchages Lot 1** : mention « chambre simple » retirée par prudence
+  (5 pers. = 2 lits doubles + lit escamotable). À valider si config exacte diffère.
+- **Photos Lot 2** : attendues fin juillet (placeholders + badge en place).
+
+Tout le reste du contenu Lot 1 et de la homepage est rédigé et en ligne.
 
 ---
 
