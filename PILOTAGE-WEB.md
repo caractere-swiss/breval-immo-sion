@@ -11,6 +11,27 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Install staging en un bouton (df1d821).**
+  `install-staging.yml` (workflow_dispatch manuel) exécute tout le runbook
+  INSTALL-STAGING.md : base MySQL via UAPI cPanel (échec clair si UAPI absent),
+  core WP fr_FR, config, install (`cc-admin`), ACF Pro (via `ACF_PRO_KEY`, zip
+  validé avant install), thème (build+rsync réutilisant `deploy.yml`), plugins
+  réf. (seopress, wp-mail-smtp, wordfence, complianz-gdpr), pages+permaliens,
+  Basic Auth. **Idempotent** : identifiants (DB/admin/Basic Auth) générés une
+  fois puis persistés côté serveur (`~/.breval_staging_creds`, chmod 600,
+  hors webroot) — un re-run les réutilise ; option `reset_credentials` pour
+  rotation volontaire. Résumé du run affiche URL + identifiants en clair
+  (à copier immédiatement dans `ACCES.md`/Keeper).
+  **Bug corrigé en cours de route** : scripts distants d'abord écrits en
+  heredoc dans le YAML → un heredoc indenté casse le parsing YAML du bloc
+  `run: |` (le scalaire se termine dès qu'une ligne est moins indentée).
+  Refait en fichiers `.github/scripts/*.sh` exécutés via `bash -s -- <args> <
+  fichier.sh` (redirection stdin, pas de heredoc). YAML + 5 scripts revalidés
+  (`bash -n` + parseur YAML) avant push.
+  **Toujours pas exécuté par moi** (pas d'accès SSH/secrets d'ici) — à lancer
+  depuis Actions → *Install staging (one-shot)* → Run, une fois les 2 secrets
+  posés (`SSH_PRIVATE_KEY`, `ACF_PRO_KEY`).
+
 - 2026-07-10 — **Fonts vendorisées + build validé (2b62a2e).**
   8 `.woff2` récupérées moi-même via **fontsource** (npm, OFL) — Fraunces
   variable + Inter 400/500/600 (latin + latin-ext), renommées aux noms attendus,
