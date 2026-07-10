@@ -11,6 +11,16 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Fix run #5 : bascule rsync → tar-over-ssh (9e6ed31).**
+  `--rsync-path=/usr/bin/rsync` (fix précédent) insuffisant — exit 12 persiste,
+  rsync réellement absent/inaccessible sur ex2. Remplacé par transfert
+  **tar-over-ssh** (ne dépend que de tar) dans les deux workflows : `rm -rf +
+  mkdir` distant émule `--delete`, `tar czf - --exclude=… . | ssh … tar xzf -`
+  reproduit le transfert. Exclusions **vérifiées empiriquement en local**
+  (tar réel, pas supposé) : node_modules/scss/ts/src/.git/.github/.env/
+  package*/webpack/tsconfig/README/CLAUDE bien exclus ; dist/, style.css,
+  functions.php, templates, fonts bien présents dans l'archive. YAML revalidé.
+
 - 2026-07-10 — **Fix run #4 : rsync introuvable côté ex2 (31ebd40).**
   SSH OK (clé chargée, mkdir distant OK) mais échec à l'étape rsync :
   `bash: rsync: command not found`, exit 12 — le PATH SSH non-interactif
