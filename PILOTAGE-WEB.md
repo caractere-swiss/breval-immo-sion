@@ -11,6 +11,15 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Fix run #2 install-staging : clé SSH « error in libcrypto » (42d2007).**
+  Run #2 échouait dès la 1re étape SSH (`Load key: error in libcrypto` →
+  `Permission denied (publickey)`, exit 255). Clé valide localement — cause =
+  écriture manuelle du secret dans un fichier sur le runner (newline/encodage).
+  **Fix** : remplacé par `webfactory/ssh-agent@v0.9.1` (charge la clé via
+  `ssh-add`, tolérant) dans `deploy.yml` ET `install-staging.yml`. Tous les
+  `-i ~/.ssh/id_deploy` retirés (ssh + rsync) ; `known_hosts` conservé via
+  `ssh-keyscan`. YAML revalidé (parseur), aucun résidu.
+
 - 2026-07-10 — **Fix run #1 install-staging : lockfile manquant (d732fb2).**
   `install-staging.yml` #1 échouait à l'étape npm : « Dependencies lock file
   is not found » (`setup-node cache: npm` + `npm ci` exigent `package-lock.json`,
