@@ -11,6 +11,14 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Fix run #1 install-staging : lockfile manquant (d732fb2).**
+  `install-staging.yml` #1 échouait à l'étape npm : « Dependencies lock file
+  is not found » (`setup-node cache: npm` + `npm ci` exigent `package-lock.json`,
+  jamais committé). Généré via `npm install` (168 paquets, `package.json`
+  inchangé), vérifié en local : `npm ci` propre (rm -rf node_modules + ci) +
+  `npm run build` OK. Committé et poussé. **`deploy.yml` en bénéficie aussi**
+  (même lockfile partagé à la racine, même `npm ci`).
+
 - 2026-07-10 — **Install staging en un bouton (df1d821).**
   `install-staging.yml` (workflow_dispatch manuel) exécute tout le runbook
   INSTALL-STAGING.md : base MySQL via UAPI cPanel (échec clair si UAPI absent),
