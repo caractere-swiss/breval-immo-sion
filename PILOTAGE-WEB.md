@@ -11,6 +11,15 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Fix run #7 : mauvais endpoint ACF Pro (a6bb397).**
+  WordPress installé OK. Échec ACF Pro : `{"code":"invalid_token"}` — l'endpoint
+  `v2/plugins/download?token=` attend un download token distinct de la license
+  key. **Fix** : endpoint officiel direct `index.php?p=pro&a=download&k=<KEY>`,
+  via `curl -G --data-urlencode` pour encoder proprement la clé (peut contenir
+  `+/=/&`). Encodage vérifié empiriquement (round-trip via httpbin.org).
+  Validation zip existante conservée. Fallback documenté : zip ACF Pro commité
+  dans le repo privé si l'intermittence 403 connue de cet endpoint persiste.
+
 - 2026-07-10 — **Fix run #6 : préfixe cPanel manquant dans les appels UAPI (0c9bbe7).**
   tar OK, WP 7.0.1 fr téléchargé, wp-config généré — mais **création MySQL
   réellement échouée** : `create_database`/`create_user`/
