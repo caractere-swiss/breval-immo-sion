@@ -11,6 +11,29 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **🟢 STAGING INSTALLÉ — install-staging.yml au vert (d63b8e7).**
+  Mandat autonome : boucle complète pilotée seul via `gh` (déclenchement,
+  watch, diagnostic, fix, push, relance) sans relais humain, jusqu'au run vert.
+  **[Run final #29120292868](https://github.com/caractere-swiss/breval-wordpress/actions/runs/29120292868)**
+  — 16/16 étapes ✓. 3 itérations de correctifs en cours de route :
+  1. Permaliens : `--hard` échouait (détection Apache indisponible en contexte
+     CLI/SSH) → retiré, bloc de réécriture WordPress standard (`/staging/`)
+     injecté manuellement dans `.htaccess`.
+  2. `wp rewrite structure` (même sans `--hard`) invoquait en interne un
+     sous-processus (`proc_open`/`proc_close`), **désactivé côté PHP sur
+     ex2** → bypass total : écriture directe des options DB
+     (`permalink_structure` + suppression `rewrite_rules` pour régénération
+     au premier hit).
+  3. Basic Auth : `htpasswd` (binaire) absent du serveur → hash APR1-MD5 via
+     `openssl passwd -apr1` (déjà utilisé ailleurs sur ex2), vérifié
+     localement avant push.
+  **Vérification finale** : `curl -I -L https://breval.net/staging` → `401`,
+  `WWW-Authenticate: Basic realm="Bréval — accès restreint"` — staging en
+  ligne, protégé, noindex actif (thème), aucune mise en ligne racine.
+  **Identifiants** (admin WP + Basic Auth) dans le **Job Summary** du run
+  (non récupérable via `gh`/API — UI web uniquement) : à copier dans
+  `ACCES.md`/Keeper par Ilias.
+
 - 2026-07-10 — **Fix run #10 : pages, gabarit non reconnu par wp-cli (366d5ac).**
   WordPress + ACF Pro + thème + plugins tous OK. Échec : `--page_template=
   "templates/pages/page-accueil.php"` → « Modèle de page non valide » (wp-cli
