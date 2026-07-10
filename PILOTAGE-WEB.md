@@ -11,6 +11,25 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **🟢 Basic Auth réparé — accès staging fonctionnel (a562dd2).**
+  Ilias signalait un 401 persistant avec `breval`/identifiants du Job Summary.
+  **Diagnostic en SSH direct** (clé `~/.ssh/breval-ci-deploy`, déjà présente
+  localement) : hash APR1 stocké **mathématiquement correct** (reproduit à
+  l'identique via `openssl passwd -apr1 -salt`), `.htaccess`/`AuthUserFile`
+  syntaxiquement propres, aucun conflit (`.htpasswds/` cPanel natif vide,
+  aucun autre `.htaccess` avec directive Auth en amont) — pourtant 401
+  systématique, y compris avec le bon mot de passe.
+  **Cause réelle** : `.htpasswd_staging` en **600** — illisible par le
+  process d'authentification LiteSpeed, qui tourne sous un utilisateur
+  système différent du compte cPanel `vwfewhpb`. Confirmé par test direct :
+  600 → 401 quoi qu'il arrive ; **644 → 200** avec les bons identifiants,
+  401 sinon/mauvais mdp/mauvais user (4 cas testés).
+  **Fix appliqué en direct sur le serveur** (même mot de passe, rien à
+  changer côté Ilias) **+ script mis à jour** pour les runs futurs : format
+  `{SHA}` (SHA1+base64) + `chmod 644` (norme `.htpasswd` en mutualisé).
+  **Vérifié** : `curl -u breval:… https://breval.net/staging/` → `200`,
+  `<title>Bréval — staging</title>` chargé.
+
 - 2026-07-10 — **🟢 STAGING INSTALLÉ — install-staging.yml au vert (d63b8e7).**
   Mandat autonome : boucle complète pilotée seul via `gh` (déclenchement,
   watch, diagnostic, fix, push, relance) sans relais humain, jusqu'au run vert.
