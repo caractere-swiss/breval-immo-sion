@@ -11,6 +11,14 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Fix run #4 : rsync introuvable côté ex2 (31ebd40).**
+  SSH OK (clé chargée, mkdir distant OK) mais échec à l'étape rsync :
+  `bash: rsync: command not found`, exit 12 — le PATH SSH non-interactif
+  d'ex2 n'expose pas rsync. **Fix** : `--rsync-path=/usr/bin/rsync`
+  (emplacement standard cPanel) ajouté aux deux occurrences (`deploy.yml` +
+  `install-staging.yml`). Fallback tar-over-ssh documenté en commentaire si
+  ce chemin diffère sur ex2. YAML revalidé.
+
 - 2026-07-10 — **Fix run #2 install-staging : clé SSH « error in libcrypto » (42d2007).**
   Run #2 échouait dès la 1re étape SSH (`Load key: error in libcrypto` →
   `Permission denied (publickey)`, exit 255). Clé valide localement — cause =
