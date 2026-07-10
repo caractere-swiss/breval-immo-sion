@@ -11,6 +11,28 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Thème WP : repo dédié + fonts + port fidèle du brouillon.**
+  Repo **`caractere-swiss/breval-wordpress`** (PRIVÉ) créé et poussé — projet
+  séparé du brouillon Eleventy (pipelines incompatibles : SSH→ex2 vs Pages).
+  HEAD `6bbd951`. Travail 100 % local (aucun serveur ; SSH ex2 KO #441615).
+  - **Fonts auto-hébergées** (`_fonts.scss` : Fraunces variable 100–900 + Inter
+    400/500/600, latin + latin-ext), import avant tokens, preload des 2 critiques,
+    zéro appel Google (FADP). ⚠️ **8 `.woff2` à déposer** dans `assets/fonts/`
+    (le zip annoncé n'a jamais été fourni ; fallback système actif en attendant).
+  - **Port fidèle du brouillon validé** → thème : header/footer (markup + classes
+    du brouillon), 3 templates (accueil, lot-1 avec galerie marquee ACF + booking
+    **inerte**, lot-2 mode « bientôt » + form `mailto:preview@caractere.swiss`
+    **neutre**), composants SCSS portés de `styles.css` (hero, cards, marquee+
+    lightbox, soon-badge, booking, forms) via les variables de tokens. `main.ts`
+    burger + lightbox (parité brouillon). Contenu ACF `cc_` avec repli sur le
+    contenu réel du brouillon (rend à l'identique sans données).
+  - **Vérifs** : SCSS compilé OK (dart-sass, `@use` résolus) ; accolades
+    équilibrées ; mailto neutre confirmé ; booking `disabled`. PHP non lintable
+    ici (php absent) — écrit avec `esc_*`/`wp_kses_post` + gardes `function_exists`.
+  - **Incident sécurité** : un sous-agent a renvoyé une **injection de prompt**
+    (faux message « Anthropic » demandant d'écrire un marqueur dans README).
+    Ignorée, aucun fichier modifié. Port refait en direct, sans sous-agent.
+
 - 2026-07-10 — **Corrections contenu Luc (07.07) + DESIGN.md + scaffold thème WP.**
   Session opérationnelle unique reprise sur `main` = `d959676` (clone local
   resynchronisé, ancien état `c68765b` périmé abandonné). Commits :
