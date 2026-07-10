@@ -11,6 +11,18 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **QA #1 : front page non assignée — corrigé (3b2f369).**
+  Racine `/staging/` servait l'article WP par défaut au lieu de la page
+  Accueil (`/staging/accueil/` rendait bien). **Cause** : `wp post meta
+  update` imprime son propre `Success: …` sur **STDOUT** à l'intérieur de
+  `ensure_page()`, contaminant la valeur capturée par
+  `ID_ACCUEIL=$(ensure_page ...)` en plus de l'ID final → `page_on_front`
+  recevait une chaîne multi-lignes invalide, rejetée, retombant à `0`.
+  **Fix** : stdout de `wp post meta update` redirigé vers `/dev/null`.
+  Ajout purge idempotente du contenu de démo (`post 1` Hello world, `page 2`
+  Page d'exemple). Appliqué en direct sur le serveur (SSH) + vérifié :
+  racine sert désormais Accueil (« Deux logements à louer à Sion »).
+
 - 2026-07-10 — **🟢 Basic Auth réparé — accès staging fonctionnel (a562dd2).**
   Ilias signalait un 401 persistant avec `breval`/identifiants du Job Summary.
   **Diagnostic en SSH direct** (clé `~/.ssh/breval-ci-deploy`, déjà présente
