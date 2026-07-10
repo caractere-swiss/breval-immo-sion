@@ -11,6 +11,15 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Fonts vendorisées + build validé (2b62a2e).**
+  8 `.woff2` récupérées moi-même via **fontsource** (npm, OFL) — Fraunces
+  variable + Inter 400/500/600 (latin + latin-ext), renommées aux noms attendus,
+  déposées dans `assets/fonts/`. **`npm run build` (webpack prod) OK** :
+  `dist/main.css` référence `dist/fonts/`, preload cohérent, typo Fraunces+Inter
+  opérationnelle, FADP respecté. Le thème est **complet et buildable**.
+  **SSH ex2 #441615 = ACTIF/testé** (user `vwfewhpb`) → 1er prérequis staging
+  levé. Restent : secrets GitHub posés + base MySQL cPanel + lancer le runbook.
+
 - 2026-07-10 — **Thème WP complet + prépa staging (repo breval-wordpress).**
   - **Thème 100 % (7daa7dc)** : 13 photos Lot 1 intégrées (hero + galerie
     marquee/lightbox, repli si galerie ACF vide) ; accueil = hero + présentation
