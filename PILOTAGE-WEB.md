@@ -11,6 +11,17 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **ACF Pro depuis zip commité (e98e549) — API définitivement abandonnée.**
+  L'endpoint direct (fix précédent) échouait aussi. Ilias a committé
+  `advanced-custom-fields-pro.zip` (v6.8.5, ~7,4 Mo) à la racine du repo
+  (`617d55d`, via GitHub web). **Fix** : nouvelle étape workflow « Transfère
+  le zip ACF Pro » (tar-over-ssh, même méthode éprouvée que le thème) → dépose
+  le zip dans `/tmp` sur ex2 ; `install-acf.sh` réécrit pour installer depuis
+  ce zip transféré (validation zip conservée) au lieu de télécharger via API.
+  **Secret `ACF_PRO_KEY` n'est plus requis.** `.gitattributes` ajouté
+  (`*.zip`/`*.woff2`/`*.jpg`/`*.png` en binary). YAML + bash revalidés,
+  transfert tar simulé en local avant push.
+
 - 2026-07-10 — **Fix run #7 : mauvais endpoint ACF Pro (a6bb397).**
   WordPress installé OK. Échec ACF Pro : `{"code":"invalid_token"}` — l'endpoint
   `v2/plugins/download?token=` attend un download token distinct de la license
