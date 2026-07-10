@@ -11,6 +11,31 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Corrections contenu Luc (07.07) + DESIGN.md + scaffold thème WP.**
+  Session opérationnelle unique reprise sur `main` = `d959676` (clone local
+  resynchronisé, ancien état `c68765b` périmé abandonné). Commits :
+  - **`f4f745d`** — `content:` **Couchages Lot 1** corrigés (réponses Luc 07.07,
+    validées) : description prose → « une chambre avec lit double, une chambre
+    avec lit simple et un lit double escamotable au séjour » (5 pers.).
+    **Wi-Fi/TV** : `<li class="draft">…(à confirmer)</li>` → `<li>Wi-Fi ·
+    Télévision inclus</li>` (plus aucun `.draft` dans `lot-1.njk`).
+    **`site.json`** : `description` réalignée (Lot 2 = colocation 4 chambres
+    meublées charges comprises, dispo 1er sept. — ne décrit plus « grand
+    appartement familial en bail annuel »). Tagline « Deux adresses à vivre »
+    conservée (neutre, exacte).
+  - **`5735683`** — `docs:` **DESIGN.md** copié à la racine du repo (design
+    system validé 07.07, préalable au scaffold WP).
+  - **Scaffold thème WordPress** (hors ce repo) : créé dans
+    `2.solution-web/wordpress/` — **projet séparé** (stack WP + ACF Pro,
+    déploiement SSH→ex2, distinct du brouillon Eleventy/GitHub Pages).
+    44 fichiers, starter « Adam » (SCSS + TS + Webpack + ACF Flexible Content
+    + deploy.yml SSH). `inc/acf.php` : 5 groupes `cc_` programmatiques
+    (`cc_accueil`, `cc_lot` commun, `cc_lot1`, `cc_lot2`, `cc_flexible`),
+    save/load `acf-json/`. Tokens SCSS fidèles à DESIGN.md (#0f4c3a / #c8714e,
+    Fraunces + Inter). Plancher accessibilité + `.soon-badge` préservés.
+    Fonts en local (FADP, fichiers woff2 à déposer). **100 % local** : pas de
+    git/npm/serveur (SSH ex2 inactif — ticket #441615).
+
 - 2026-07-09 — **HANDOFF / consolidation** (rattrapage du journal, resté figé à
   `5375b2a`). État actuel de `main` = commit `c07d669`, HEAD. `main` local et
   remote strictement alignés (aucune divergence) → clone `main` = état complet,
@@ -91,15 +116,29 @@
 ## 3. Blocages & questions
 > Ce que Claude Code remonte au chat Web.
 
-Aucun blocage technique. `main` = `c07d669`, propre, déployé (GitHub Pages).
-En attente de Luc (3 points seulement) :
-- **Wi-Fi / Télévision Lot 1** : 1 ligne `.draft` restante dans `lot-1.njk`
-  (équipements). À confirmer/infirmer.
-- **Config couchages Lot 1** : mention « chambre simple » retirée par prudence
-  (5 pers. = 2 lits doubles + lit escamotable). À valider si config exacte diffère.
-- **Photos Lot 2** : attendues fin juillet (placeholders + badge en place).
+Aucun blocage technique. `main` propre, déployé (GitHub Pages).
+Wi-Fi/TV et couchages Lot 1 **résolus** (réponses Luc 07.07, intégrées ce jour).
 
-Tout le reste du contenu Lot 1 et de la homepage est rédigé et en ligne.
+Restent, tous **non bloquants** :
+- **Photos Lot 2** : attendues fin juillet (placeholders + badge en place).
+- **Lot des photos du 25.06** : à identifier (à quel logement/pièce elles
+  correspondent).
+- **Autres équipements Lot 1** (linge / parking) : à confirmer avec Luc.
+- **Champ « durée souhaitée »** du formulaire Lot 2 (annuel / mensuel) : à
+  confirmer avec Luc.
+- **Feu vert client** : Luc a répondu aux questions factuelles mais n'a **pas**
+  validé formellement l'état actuel (photos + textes). Pas de publication
+  définitive avant son GO.
+
+**Chantier WordPress (site final)** — hors ce repo, dans `2.solution-web/wordpress/` :
+- Scaffold thème posé (local). Suite = fonts woff2 à déposer, puis construction
+  section par section après validation maquette.
+- **Serveur en attente** : SSH ex2 inactif (ticket **#441615**). Aucune install
+  WP / WP-CLI / déploiement tant qu'il n'est pas ouvert.
+- Domaine `breval.net` + hébergement ex2 acquis. Réservation Lot 1
+  (MotoPress + Stripe) = sous-phase ultérieure (validation Luc + compte Stripe).
+
+Tout le contenu Lot 1 et la homepage sont rédigés et en ligne (brouillon).
 
 ---
 
