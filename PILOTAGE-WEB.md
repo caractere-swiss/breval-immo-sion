@@ -11,6 +11,14 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Fix run #9 : slug SEOPress + tolérance d'échec plugins (c8bb405).**
+  Gros progrès : WordPress ✓, ACF Pro (zip) ✓, thème Bréval activé ✓. Échec à
+  l'installation des plugins réf. : `seopress` introuvable — vrai slug
+  WordPress.org = `wp-seopress`. **Fix** : slug corrigé + chaque plugin
+  (`wp-seopress`, `wp-mail-smtp`, `wordfence`, `complianz-gdpr`) tenté
+  isolément, un échec individuel n'émet plus qu'un warning et ne bloque plus
+  le reste du staging (plugins secondaires pour la preview).
+
 - 2026-07-10 — **ACF Pro depuis zip commité (e98e549) — API définitivement abandonnée.**
   L'endpoint direct (fix précédent) échouait aussi. Ilias a committé
   `advanced-custom-fields-pro.zip` (v6.8.5, ~7,4 Mo) à la racine du repo
