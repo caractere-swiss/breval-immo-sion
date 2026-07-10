@@ -11,6 +11,21 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Fix run #6 : préfixe cPanel manquant dans les appels UAPI (0c9bbe7).**
+  tar OK, WP 7.0.1 fr téléchargé, wp-config généré — mais **création MySQL
+  réellement échouée** : `create_database`/`create_user`/
+  `set_privileges_on_database` recevaient le suffixe nu (`stgbreval`/
+  `stguser`) au lieu du nom préfixé `vwfewhpb_…` exigé par cPanel, alors que
+  `wp config create` utilisait déjà (correctement) le nom préfixé →
+  `wp-config.php` pointait vers une base jamais créée. L'échec UAPI ne
+  stoppait pas le script (`if` exempte du `set -e`).
+  **Fix** : les 3 appels UAPI utilisent maintenant `$DB_NAME`/`$DB_USER`
+  (préfixés), cohérents partout. **Idempotence** : si `reset_credentials=true`,
+  un `wp-config.php` existant (potentiellement invalide, issu du run cassé)
+  est supprimé avant la vérification d'existence → régénéré au lieu d'être
+  sauté. `bash -n` + YAML revalidés.
+  Ilias relance en cochant « Régénérer DB/admin/Basic Auth » pour repartir propre.
+
 - 2026-07-10 — **Fix run #5 : bascule rsync → tar-over-ssh (9e6ed31).**
   `--rsync-path=/usr/bin/rsync` (fix précédent) insuffisant — exit 12 persiste,
   rsync réellement absent/inaccessible sur ex2. Remplacé par transfert
