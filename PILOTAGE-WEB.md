@@ -11,6 +11,28 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Thème WP complet + prépa staging (repo breval-wordpress).**
+  - **Thème 100 % (7daa7dc)** : 13 photos Lot 1 intégrées (hero + galerie
+    marquee/lightbox, repli si galerie ACF vide) ; accueil = hero + présentation
+    Sion + 2 lot-cards + **piliers** (cc_piliers + repli 3 arguments, ordre
+    DESIGN §6) ; Lot 2 = toggle ACF `cc_lot2_duree_active` (off, champ « durée »
+    prêt mais masqué) ; **SEO** `inc/seo.php` : noindex global (staging) + Open
+    Graph + og:image Lot 1 + meta description. Booking inerte, mailto neutre,
+    a11y/responsive conservés. ⚠️ **8 `.woff2` toujours non fournis** (fallback
+    système ; build typo final en attente).
+  - **Prépa déploiement staging (f20e980)** : `deploy.yml` ciblé sur
+    `public_html/staging/…/themes/breval/` (sous-dossier caché, SSL, pas de DNS —
+    reco skill) ; `INSTALL-STAGING.md` = runbook WP-CLI (core fr_FR, ACF Pro via
+    `ACF_PRO_KEY`, plugins réf., pages + templates, Basic Auth `.htpasswd`) sans
+    secrets ; `ACCES.md` gabarit **gitignoré** (identifiants → Keeper, jamais Git).
+  - **NON exécuté — blocages (côté Ilias/CI, pas moi)** : je n'ai **pas** d'accès
+    SSH ex2 depuis la machine et ne manipule pas les clés (`breval-ci-deploy`,
+    `ACF_PRO_KEY`) ni les mots de passe (DB, admin WP). `wp core install` exige
+    ces credentials + SSH #441615 actif + base MySQL créée en cPanel. Le
+    déploiement CI (`deploy.yml`, manuel) ne fait que rsync le thème dans un WP
+    **déjà installé** — il n'installe pas WordPress. Staging = à monter par Ilias
+    (ou une CI d'install dédiée) via le runbook. Rien lancé sur le serveur.
+
 - 2026-07-10 — **Thème WP : repo dédié + fonts + port fidèle du brouillon.**
   Repo **`caractere-swiss/breval-wordpress`** (PRIVÉ) créé et poussé — projet
   séparé du brouillon Eleventy (pipelines incompatibles : SSH→ex2 vs Pages).
