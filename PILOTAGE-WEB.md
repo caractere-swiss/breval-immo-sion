@@ -11,6 +11,18 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-10 — **Fix run #10 : pages, gabarit non reconnu par wp-cli (366d5ac).**
+  WordPress + ACF Pro + thème + plugins tous OK. Échec : `--page_template=
+  "templates/pages/page-accueil.php"` → « Modèle de page non valide » (wp-cli
+  valide contre `wp_get_theme()->get_page_templates()`, qui ne détecte pas les
+  gabarits imbriqués sous `templates/pages/`). Page « Accueil » créée mais
+  gabarit non assigné. **Fix** : page créée SANS `--page_template`, puis
+  `wp post meta update <id> _wp_page_template "<valeur>"` en écriture directe
+  (bypasse la validation CLI — WordPress lit cette meta telle quelle au
+  rendu via `get_page_template_slug()`). Échec de l'assignation = warning
+  non bloquant. Idempotent : la page « accueil » déjà créée au run précédent
+  sera retrouvée (pas de doublon), seul le gabarit sera (re)assigné.
+
 - 2026-07-10 — **Fix run #9 : slug SEOPress + tolérance d'échec plugins (c8bb405).**
   Gros progrès : WordPress ✓, ACF Pro (zip) ✓, thème Bréval activé ✓. Échec à
   l'installation des plugins réf. : `seopress` introuvable — vrai slug
