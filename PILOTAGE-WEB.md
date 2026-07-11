@@ -11,6 +11,28 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-11 — **🟢 Favicon provisoire intégré + déployé (f4b5eda).**
+  SVG monogramme « B » fourni par Ilias (vert #0F4C3A / crème #FBF8F3).
+  Fallbacks générés par dessin direct haute-résolution + sous-échantillonnage
+  LANCZOS (plus net qu'un rendu `qlmanage` brut, qui ne remplissait pas le
+  canevas demandé — détecté et écarté avant de committer) : `favicon.ico`
+  multi-tailles (16/32/48), PNG 32/192/512 arrondis transparents,
+  `apple-touch-icon.png` 180×180 **plein bord à bord sans transparence**
+  (recommandation Apple — iOS applique son propre masque d'arrondi), SVG
+  source conservé et servi directement.
+  `inc/favicon.php` : balises `<link>` injectées via `wp_head`, **gardées**
+  derrière `! get_option('site_icon')` — cède automatiquement la place au
+  Site Icon natif WP le jour où le vrai logo est fourni, zéro conflit.
+  **Vérifié après déploiement** : 6 balises `<link>` présentes, `favicon.ico`
+  → 200/image-x-icon. Basic Auth + noindex intacts (401 sans creds, meta
+  noindex toujours présente).
+
+  **Rappel Chat Web** : (2) WP Rocket **non installé** — différé post-launch
+  (décision Ilias, gain marginal sur petit site + risque de cache à
+  re-tester juste avant go-live). (3) Test mobile réel — outils indisponibles
+  pour reflow/viewport variable ; structure vérifiée (meta viewport + burger
+  `.nav-toggle` présents) ; Ilias fera un test visuel au moment du go-live.
+
 - 2026-07-11 — **🟢 robots.txt corrigé + déployé (34b77da).**
   Root cause vérifiée dans le code source WP core installé
   (`wp-includes/class-wp-rewrite.php`) : « robots.txt -- only if installed
