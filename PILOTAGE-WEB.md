@@ -11,6 +11,29 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-11 — **🟢 B. SMTP RÉSOLU — root cause + fix idempotent (49b7db6).**
+  Root cause trouvée via chat Web en lisant la config réelle en wp-admin :
+  **`WPMS_SMTP_ENCRYPTION` n'est pas un nom de constante reconnu par WP Mail
+  SMTP** (le bon nom = `WPMS_SSL`) — jamais appliqué, encryption restée
+  « None » en DB malgré port 465 (SSL implicite) → PHPMailer ouvrait un
+  socket en clair sur un port attendant un handshake TLS → hang indéfini.
+  L'auth SMTP brute (openssl s_client, testée par moi) réussissait car
+  effectuée dans le bon mode — d'où la fausse piste qui a masqué longtemps
+  le vrai problème.
+  **Fix corrigé côté Ilias en wp-admin** (Encryption None→SSL) : `Email
+  Test` → succès, **réception confirmée dans agence@caractere.swiss** (boîte
+  de réception, pas spam, vérifié côté Gmail). Délivrabilité bout-en-bout OK.
+  **Fix figé côté script** (`configure-smtp.sh`) pour survivre à un futur
+  reinstall : `WPMS_SSL` (nom correct) + **suppression de l'early-exit**
+  « skip si WPMS_ON déjà présent » qui masquait justement le bug (empêchait
+  toute correction sur un env déjà « configuré »). `wp config set` est déjà
+  idempotent par constante — pas besoin d'un check global fragile.
+  **Vérifié après fix** : `WPMS_SSL` bien défini, `wp_mail()` → `true` en
+  **0,7s** (vs hang >45s avant) — non-régression confirmée.
+  Expéditeur = `contact@breval.net` (boîte cPanel ex2, SPF/DKIM déjà
+  alignés) ; destinataire inchangé = `BREVAL_CONTACT_EMAIL`
+  (`agence@caractere.swiss`, provisoire).
+
 - 2026-07-11 — **GO-LIVE Lot 1 — parties A/C/D faites et testées (4fef8d2, déployé).**
   Mandat GO-LIVE en 5 volets (A formulaires, B SMTP, C QA/QC, D image, E go-live
   gated). **A/C/D codés, déployés sur staging, testés en conditions réelles**
