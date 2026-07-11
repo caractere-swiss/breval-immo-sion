@@ -11,6 +11,49 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-11 — **Préparation Phase D pré-lancement (statut, rien de gated exécuté).**
+  Consigne : préparer Phase D, ne rien exécuter des étapes gated (noindex,
+  Basic Auth, bascule racine). État vérifié point par point :
+  - ✅ **SEO de base** : ACF Pro, SEOPress actifs. Sitemap déjà activé par
+    défaut (`seopress_xml_sitemap_general_enable=1`), résout correctement
+    (`/sitemap.xml` → 301 → `/sitemaps.xml`, XML valide, index + pages).
+  - ⚠️ **robots.txt — BUG trouvé** : renvoie la page 404 du thème au lieu du
+    fichier virtuel natif WordPress (`do_robots()`). Cause probable : le
+    bypass `wp rewrite structure` (fix proc_open, voir plus haut) n'a pas
+    correctement réenregistré la reconnaissance de `is_robots()` par le
+    parseur de requête WP. **À corriger avant le go-live** — sinon les
+    moteurs de recherche ne peuvent pas lire les directives d'indexation à
+    l'ouverture publique.
+  - ✅ **404** : template thème fonctionnel, renvoie bien un vrai statut
+    HTTP 404 (vérifié), design cohérent (nav + footer + CTA retour accueil).
+  - ⚠️ **Favicon** : absent (`site_icon=0`). Aucun asset logo fourni par le
+    client à ce jour (`has_custom_logo()` → faux partout). Même situation
+    que le hero — **nécessite un asset réel côté Luc/Ilias**, pas de repli
+    raisonnable comme pour la photo Lot 1.
+  - ✅ **RGPD/Complianz** : plugin actif, config initiale présente (13
+    options `cmplz_*` en base).
+  - ✅ **UpdraftPlus (sauvegarde)** : ajouté à `activate-theme-plugins.sh`
+    (gratuit, pas de licence requise) et installé/activé via un rerun
+    d'`install-staging.yml` — **vérifié idempotent** : front page, permaliens
+    et permissions Basic Auth (644) intacts après le rerun complet.
+  - ⏸️ **WP Rocket (cache)** : BLOQUÉ — payant, nécessite un zip licencié
+    comme ACF Pro (même procédure : commit le zip, script de transfert
+    tar-over-ssh + `wp plugin install`). **Action Ilias** : fournir le zip.
+  - ✅ **Wordfence** : actif (option `wordfence_wafStatus` non lisible via
+    `wp option get` — normal, stockée différemment ; activation confirmée
+    via `wp plugin is-active`).
+  - ✅ **2 formulaires** : déjà testés en conditions réelles (voir entrées
+    précédentes) — succès + réception confirmée.
+  - ⏸️ **Responsive mobile réel** : non testable en headless (pas d'accès
+    navigateur dans ce contexte). Les règles CSS (burger nav à 760px, clamp
+    des tailles marquee/hero) sont en place et vérifiées au niveau du code,
+    mais un test visuel réel sur device/émulateur reste à faire par un
+    humain avant le go-live.
+
+  **Rien de gated touché** : noindex intact (thème), Basic Auth intacte
+  (vérifiée après chaque déploiement), aucune bascule vers `breval.net`
+  racine.
+
 - 2026-07-11 — **🟢 B. SMTP RÉSOLU — root cause + fix idempotent (49b7db6).**
   Root cause trouvée via chat Web en lisant la config réelle en wp-admin :
   **`WPMS_SMTP_ENCRYPTION` n'est pas un nom de constante reconnu par WP Mail
