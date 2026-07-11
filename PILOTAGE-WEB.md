@@ -11,6 +11,44 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-11 — **🟢🚀 GO-LIVE — Lot 1 en production sur breval.net (5af798c).**
+  Feu vert Ilias explicite et confirmé directement (deux demandes de
+  confirmation par le classifieur auto-mode — relais « Chat Web » jugé
+  insuffisant pour une action de cette ampleur, puis « go » seul jugé
+  insuffisant — confirmation finale nommant précisément les actions
+  obtenue avant tout geste destructif). Exécuté étape par étape avec
+  vérification après chacune, comme demandé :
+  1. **Sauvegarde complète UpdraftPlus** (DB + plugins + thèmes + uploads)
+     avant tout geste — confirmée « succeeded and is now complete ». Note :
+     local uniquement (aucune destination distante configurée).
+  2. **Migration staging → racine** : fusion `wp-content/` + déplacement du
+     cœur WP (fichiers/dossiers, pas de dump/import — même base MySQL,
+     changement de chemin uniquement) ; `siteurl`/`home` mis à jour ;
+     `wp search-replace` (12 remplacements, dry-run vérifié avant exécution
+     réelle) ; bloc de réécriture WordPress ajouté au `.htaccess` racine
+     (`RewriteBase /`) ; titre du site corrigé (« — staging » retiré).
+     **Vérifié** : 3 pages 200, assets/images chargent, zéro résidu
+     `/staging` en sortie HTML, 2 formulaires testés (succès).
+  3. **Redirection `/staging` → racine** (301, chemin préservé) — vérifiée.
+  4. **Basic Auth retiré** : n'existait en réalité que sur `staging/.htaccess`
+     (jamais copié à la racine) — confirmé absent partout, fichier
+     `.htpasswd_staging` orphelin nettoyé.
+  5. **Noindex retiré** : `inc/seo.php` (forçage codé en dur supprimé,
+     commit `d270eeb`, déployé), `blog_public=1`, `robots.txt` production
+     (`Allow: /` + `Sitemap: https://breval.net/sitemaps.xml`). SEOPress
+     vérifié : ses noindex restants ne concernent que les archives
+     auteur/date/recherche (défauts sains, ne touchent pas nos pages).
+  6. **Vérification finale (9 points)** : home ✓, HTTP→HTTPS forcé ✓, HSTS
+     ✓, sitemap.xml ✓, robots.txt Allow+Sitemap ✓, favicon ✓, noindex
+     absent du HTML ✓, Basic Auth absent (200 public) ✓, `/staging` redirige
+     ✓. Pages Lot 1/Lot 2 + formulaire Lot 1 retestés après le redéploiement
+     du thème vers la racine — tout fonctionnel.
+  `deploy.yml` retargeté sur la racine production (`5af798c`) pour tout
+  déploiement futur.
+
+  **URLs finales** : https://breval.net/ · https://breval.net/courte-duree/
+  · https://breval.net/longue-duree/ — prêtes pour QA public par Ilias.
+
 - 2026-07-11 — **🟢 Favicon provisoire intégré + déployé (f4b5eda).**
   SVG monogramme « B » fourni par Ilias (vert #0F4C3A / crème #FBF8F3).
   Fallbacks générés par dessin direct haute-résolution + sous-échantillonnage
