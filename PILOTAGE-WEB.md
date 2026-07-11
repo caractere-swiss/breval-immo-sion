@@ -11,6 +11,50 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-11 — **GO-LIVE Lot 1 — parties A/C/D faites et testées (4fef8d2, déployé).**
+  Mandat GO-LIVE en 5 volets (A formulaires, B SMTP, C QA/QC, D image, E go-live
+  gated). **A/C/D codés, déployés sur staging, testés en conditions réelles**
+  (requêtes HTTP effectives, pas de simulation) :
+  - **A. Formulaires** (`inc/forms.php`) : Lot 1 — maquette inerte remplacée
+    par un vrai formulaire « Demande de réservation » (arrivée/départ/
+    personnes/nom/email/tel/message), nonce + honeypot, envoi `wp_mail()`.
+    Lot 2 — formulaire « être prévenu·e » câblé (était mailto/démo).
+    Adresse destination centralisée dans **une seule constante**
+    `BREVAL_CONTACT_EMAIL` (= `agence@caractere.swiss` provisoire — switch
+    Luc = un seul endroit à changer). Objets mail conformes à la consigne.
+    **Testé en direct** (requêtes POST réelles vers `admin-post.php` avec
+    nonce extrait dynamiquement) : Lot 1 → `breval_form=success` + message
+    affiché ✓ ; Lot 2 → `success` ✓ ; honeypot rempli → `error` (rejeté) ✓.
+  - **C. QA/QC** : galerie Lot 1 — 26 vignettes `-400w`/`-800w` générées
+    (sips), `srcset`+`sizes` sur repli statique ET branche ACF
+    (`wp_get_attachment_image_srcset`), original 1600px réservé au lightbox,
+    fond `--sand` anti-flash-blanc. `inc/performance.php` : HSTS
+    (`max-age=31536000; includeSubDomains`, pas de preload) + dequeue complet
+    wp-emoji. **Vérifié en direct** : header HSTS présent, srcset présent
+    dans le HTML servi, `wp-emoji-release` absent du head (0 occurrence).
+  - **D. Hero accueil** : repli provisoire = photo Lot 1 (balcon) au lieu du
+    placeholder gris. **Vérifié** : présente dans le HTML servi.
+  - Déployé via le pipeline établi (`gh workflow run deploy.yml`, pas de SSH
+    manuel pour le déploiement — refusé à raison par le classifieur auto-mode
+    la première fois, corrigé). PHP linté (7 fichiers, `php -l` via serveur)
+    avant push, build webpack OK.
+
+  **⏸️ B. SMTP — BLOQUÉ, credentials manquants.** WP Mail SMTP (plugin déjà
+  dans la stack réf.) nécessite les identifiants du compte
+  `agence@caractere.swiss` (Infomaniak) que je n'ai pas et ne dois pas
+  deviner. `wp_mail()` fonctionne techniquement dès maintenant (testé,
+  retourne `true`) via le mail() PHP local du serveur — mais la
+  délivrabilité réelle (anti-spam) n'est PAS garantie sans SMTP configuré.
+  **Action Ilias** : fournir user/mdp SMTP Infomaniak (→ Keeper/ACCES.md),
+  je configure WP Mail SMTP ensuite.
+
+  **⏸️ E. Go-live — GATED, pas d'action engagée.** Étapes 8–11 (Phase D
+  checklist complète, déploiement racine breval.net, retrait noindex +
+  Basic Auth) sont explicitement conditionnées à « Phase D validée » dans
+  la consigne, et constituent des actions à fort impact (bascule domaine
+  public, suppression de la protection d'accès) — je ne les engage pas sans
+  confirmation explicite, conformément aux garde-fous.
+
 - 2026-07-10 — **QA #1 : front page non assignée — corrigé (3b2f369).**
   Racine `/staging/` servait l'article WP par défaut au lieu de la page
   Accueil (`/staging/accueil/` rendait bien). **Cause** : `wp post meta
