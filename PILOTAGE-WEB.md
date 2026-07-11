@@ -11,6 +11,25 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-11 — **🟢 robots.txt corrigé + déployé (34b77da).**
+  Root cause vérifiée dans le code source WP core installé
+  (`wp-includes/class-wp-rewrite.php`) : « robots.txt -- only if installed
+  at the root » — le mécanisme virtuel n'est ajouté QUE si le site est
+  installé à la racine du domaine. Volontaire côté WordPress pour toute
+  install en sous-dossier, **pas un effet de bord** de mon bypass
+  `proc_open` précédent (vérifié : `rewrite_rules` régénéré, 91 règles,
+  aucune concernant robots — ce tableau n'était de toute façon pas le bon
+  mécanisme, fausse piste écartée avant de conclure).
+  **Fix** : fichier physique `robots.txt` à la racine du site (servi
+  directement par le serveur, avant WordPress). Contenu `Disallow: /`
+  tant qu'en staging — **renforce** le noindex déjà forcé, aucun changement
+  du gate go-live. À mettre à jour (Allow + Sitemap) lors du passage en
+  prod racine, en même temps que le retrait du noindex — geste gated, hors
+  périmètre de ce script.
+  **Vérifié après déploiement** : `robots.txt` → 200/text-plain/Disallow ;
+  Basic Auth intact (401 sans creds, 200 avec) ; noindex toujours forcé.
+  Rien de gated touché.
+
 - 2026-07-11 — **Préparation Phase D pré-lancement (statut, rien de gated exécuté).**
   Consigne : préparer Phase D, ne rien exécuter des étapes gated (noindex,
   Basic Auth, bascule racine). État vérifié point par point :
