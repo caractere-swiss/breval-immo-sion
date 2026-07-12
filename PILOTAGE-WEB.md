@@ -11,6 +11,60 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-12 — **Page Politique de confidentialité + QA post-launch (2b76008 + fixes CSS).**
+  Document HTML validé fourni par Ilias (autonome, sans Google Fonts,
+  couleurs Bréval) → gabarit de page dédié
+  (`templates/pages/page-politique-confidentialite.php`) + SCSS scopé sous
+  `.privacy-policy-doc` (`assets/scss/pages/_politique-confidentialite.scss`)
+  pour zéro collision avec les classes globales du thème (le document utilise
+  `.hero`, `section`, etc. — déjà utilisées ailleurs). Vérifié : `.hero`
+  global du site (accueil/lots) intact, séparé du `.hero` scopé du document.
+  Page #3 (déjà existante en brouillon depuis le scaffold) : gabarit assigné,
+  publiée. `wp_page_for_privacy_policy` → 3. Lien ajouté au footer.
+  Email contact = `l.faudeil@asdr.ch` (déjà dans le document source).
+  **Vérifié en direct** : 200, template rendu, email correct (×4), lien
+  footer présent, CSS scopé confirmé (`.privacy-policy-doc .hero` distinct
+  du `.hero` global).
+  ⚠️ **Complianz non pointé** : `cmplz_options` quasi vide (assistant/wizard
+  jamais lancé, pas de post type `cmplz_document`) — aucune option WP-CLI
+  simple pour lier la page. Nécessite l'assistant Complianz en wp-admin
+  (interface, pas scriptable en l'état). Réglages > Confidentialité (core WP)
+  fait, seul Complianz reste en attente d'une action manuelle wp-admin.
+
+  **QA post-launch (même session, plusieurs allers-retours utilisateur)** :
+  - Doublon puce+coche + espacement inégal `.features` → `columns` CSS au
+    lieu de `grid` (piège row-height sync) + `list-style-type:none` redondant
+    (quirk Safari).
+  - Débordement horizontal mobile réel → cause racine `.booking__fields
+    { grid-template-columns: 1fr 1fr }` (piste `1fr` seule a un minimum
+    implicite = contenu, pas 0 — un `<input type="date">` natif refusait de
+    rétrécir). Fix `minmax(0, 1fr)` partout où le même piège existait
+    (`.booking__fields`, `.cal__grid`, `.layout-2col`) + `min-width:0` sur
+    les grid items eux-mêmes (`.field`) — les deux niveaux (piste ET item)
+    doivent être corrigés. `overflow-x:hidden` posé en premier (filet de
+    sécurité, insuffisant seul) conservé en complément.
+  - Champs Arrivée/Départ visuellement pas homogènes → icône native du
+    date-picker standardisée (padding fixe).
+  - Espace blanc entre dernière section et footer → `margin-top:2rem`
+    orphelin retiré de `.site-footer`.
+  - Skip-link "Aller au contenu" visible en permanence (régression a11y) →
+    masquage par défaut restauré (autonome, sans dépendre de `.sr-only`),
+    feature conservée (visible seulement au focus clavier).
+  - Meta descriptions SEOPress ajoutées sur les 3 pages (textes validés) ;
+    doublon `<meta name="description">` + Open Graph (thème vs SEOPress)
+    trouvé et corrigé en vérifiant — thème ne sort plus que `og:image`.
+  - Footer "Site propriétaire" remplacé par le crédit agence standard (logo
+    Caractère). Promesse de délai "24 à 48h" retirée (pas d'engagement non
+    garanti).
+  Tous vérifiés en direct sur production après chaque déploiement, aucun
+  élément gated retouché (noindex/Basic Auth toujours retirés, racine
+  intacte).
+
+  **⚠️ Note infrastructure** : Ilias a déplacé les dossiers de travail locaux
+  (`claude-code/`, `wordpress/`) dans `2.solution-web/_to_delete/` en cours
+  de session — repéré, rien perdu (tout le travail non commité était déjà
+  sur disque au nouveau chemin, poursuivi normalement). Signalé à Ilias.
+
 - 2026-07-12 — **QA post-launch : meta descriptions ajoutées + doublon corrigé (46b500f).**
   Les 3 pages live n'avaient pas de meta description SEOPress. Ajoutées via
   `_seopress_titles_desc` (wp-cli), textes validés par Ilias. Un premier essai
