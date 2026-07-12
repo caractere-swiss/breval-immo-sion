@@ -11,6 +11,23 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-12 — **QA post-launch : meta descriptions ajoutées + doublon corrigé (46b500f).**
+  Les 3 pages live n'avaient pas de meta description SEOPress. Ajoutées via
+  `_seopress_titles_desc` (wp-cli), textes validés par Ilias. Un premier essai
+  a perdu une apostrophe (« jusqu'à » → « jusquà », échappement shell) —
+  détecté en relisant, corrigé immédiatement.
+  **Bug trouvé en vérifiant** : DOUBLON de balises — `<meta name="description">`
+  + tout le jeu Open Graph (type/site_name/title/description/url) apparaissaient
+  deux fois : une copie correcte de SEOPress, une copie vide/redondante du
+  thème (`inc/seo.php`, actif depuis avant que SEOPress ne gère tout ça).
+  **Fix** : le thème ne sort plus que `og:image` (repli photo Lot 1 — seule
+  contribution non couverte par SEOPress, qui n'a pas d'image par défaut sans
+  featured image). Tout le reste retiré du thème, laissé à SEOPress seul.
+  **Vérifié en direct après déploiement** sur les 3 pages : une seule
+  `<meta name="description">`, un seul jeu Open Graph complet
+  (url/site_name/locale/type/title/description/image), textes exacts,
+  apostrophe correcte.
+
 - 2026-07-11 — **🟢🚀 GO-LIVE — Lot 1 en production sur breval.net (5af798c).**
   Feu vert Ilias explicite et confirmé directement (deux demandes de
   confirmation par le classifieur auto-mode — relais « Chat Web » jugé
