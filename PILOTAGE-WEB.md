@@ -11,6 +11,29 @@
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
 
+- 2026-07-12 — **Fix collision CSS réelle — politique de confidentialité (45919aa).**
+  QA (chat Web, `getComputedStyle` confirmé) : titre du hero affiché à la
+  verticale (1 lettre/ligne). **Le « zéro collision » annoncé n'était pas
+  tenu** : le scoping par ancestor selector (`.privacy-policy-doc .hero`)
+  augmente la spécificité mais ne bloque QUE les propriétés redéclarées
+  explicitement — `.hero{display:flex}` du thème global continuait de
+  s'appliquer (jamais redéclaré dans mon scope), écrasant `.hero-title` à
+  une largeur minuscule dans le flex row à 4 enfants.
+  **Fix robuste (recommandé par le chat Web)** : toutes les classes
+  génériques du document préfixées `pp-` (`pp-hero`, `pp-hero-title`,
+  `pp-section-title`, `pp-card-label`, etc.) — élimine le risque à la racine
+  pour toutes les classes, pas seulement `.hero`. Vérifié : aucune classe
+  non préfixée résiduelle dans le template (grep), `.hero` global du thème
+  confirmé intact et séparé dans le CSS compilé.
+  **Vérifié en production après déploiement** : markup sert les classes
+  `pp-*`, `.privacy-policy-doc .pp-hero{display:block;...}` bien le CSS
+  appliqué, `.hero{display:flex;...}` global toujours présent séparément.
+  **Leçon retenue** : scoping par ancêtre seul ≠ isolement complet — un
+  scoping fiable exige soit des noms de classes garantis uniques (préfixe),
+  soit de redéclarer explicitement TOUTES les propriétés susceptibles
+  d'entrer en collision (fragile, facile d'en oublier une — exactement ce
+  qui s'est passé ici).
+
 - 2026-07-12 — **Page Politique de confidentialité + QA post-launch (2b76008 + fixes CSS).**
   Document HTML validé fourni par Ilias (autonome, sans Google Fonts,
   couleurs Bréval) → gabarit de page dédié
