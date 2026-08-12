@@ -33,6 +33,52 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-12 — **🟢 UpdraftPlus — nouvelle doctrine appliquée : capture ponctuelle, plus de sauvegarde régulière (df8dc10 → 2994b1f).**
+  Décision Ilias : l'hébergeur assure déjà le régulier (ex2 : 1er/14 du mois +
+  7 derniers jours, JetBackup/cPanel ; Infomaniak sur le reste du parc).
+  UpdraftPlus devient un outil de capture ponctuelle avant grosse
+  intervention, téléchargée en zip côté agence. Toutes les clés vérifiées
+  dans le code réel du plugin (1.26.5, wordpress.org) avant tout changement.
+  - **Planifications -> `manual`** (fichiers + base) — valeur native
+    confirmée dans le code (`admin.php`, `class-updraftplus.php`).
+  - **Rétention -> 4** (fichiers + base), au lieu de 1.
+  - **Aucune destination distante, rapports e-mail désactivés** — déjà vrai
+    avant intervention (`updraft_service` et `updraft_email` déjà vides),
+    rien à changer, juste vérifié.
+  - **`updraft_delete_local` tranché par le code, pas par supposition** :
+    reste à sa valeur (1, défaut du plugin), **volontairement pas touché**.
+    `delete_local()` n'est appelée que depuis `uploaded_file()`, qui elle-même
+    ne l'invoque QUE si un service de stockage distant non vide est
+    configuré (le plugin l'affirme lui-même en commentaire : "Where we are
+    only backing up locally, only the "prune" function should do deleting").
+    Avec zéro destination distante ici, ce chemin ne s'exécute **jamais** —
+    **verdict : cas (a), inerte, sans effet.** Pas de risque que les
+    captures ponctuelles s'auto-effacent.
+  - **Test réel exécuté deux fois** (1er run a servi à vérifier la doctrine
+    idempotente, format ci-dessous = run final
+    [#31606744030](https://github.com/caractere-swiss/breval-wordpress/actions/runs/31606744030)) :
+    sauvegarde déclenchée → statut `success:1` confirmé → **les 6 fichiers du
+    set (plugins/thèmes/uploads/mu-plugins/others/db) vérifiés PHYSIQUEMENT
+    présents sur disque, lisibles, tailles conformes** à ce que
+    `updraft_last_backup` annonçait — precondition exacte du téléchargement
+    (`readfile()` sur ce chemin). **Non vérifié : le clic réel du bouton
+    "Télécharger" en wp-admin** (hors périmètre, pas de session wp-admin
+    depuis ce script — signalé explicitement, pas présumé).
+  - **Export des réglages** : le bouton wp-admin est 100% client-side (JS
+    pur, aucun endpoint serveur — vérifié dans le JS source) : impossible à
+    déclencher en headless. JSON reconstruit à la place depuis les valeurs
+    DB réelles des **champs exacts du formulaire Réglages** (liste extraite
+    de `templates/wp-admin/settings/form-contents.php`, pas un dump
+    générique de toutes les options — celui-ci aurait à tort inclus
+    l'historique des sauvegardes). Deux défauts corrigés en cours de route
+    après vérification contre le gabarit (pas devinés) :
+    `updraft_delete_local` défaut réel = 1 (coché), et `updraft_auto_updates`
+    n'a pas sa propre option — lu en direct via
+    `$updraftplus->is_automatic_updating_enabled()`. Fichier envoyé à
+    Ilias : `updraftplus-settings-breval-modele.json` — à transmettre au
+    skill `2-1-solution-web` pour remplacer le modèle laforetdescissy.ch
+    (31.08.2025, rétention 1 + planifications automatiques, obsolète).
+
 - 2026-08-12 — **🟢 ACF Pro 6.8.5 → 6.8.7 déployé — vulnérabilité Wordfence du 16.07 fermée (e08751f → e53feec).**
   Feu vert technique du chat stratégie, avec correction de la règle : « 6.8.6
   OU PLUS RÉCENT », pas « exactement 6.8.6 ». Zip 6.8.7 fourni par Ilias
