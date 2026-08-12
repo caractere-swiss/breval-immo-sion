@@ -33,6 +33,62 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-12 — **BS-T5 Hotel Booking Lite — prep + diff complet, PAS déployé (attente GO Ilias).**
+  Brief reçu du chat stratégie (2.solution-web), ticket Zoho BS--T5. Recherche
+  effectuée sur le **code source réel** de `motopress-hotel-booking-lite`
+  6.2.3 (téléchargé depuis wordpress.org, pas de supposition sur les clés
+  d'options/meta) + diagnostic **lecture seule** sur le serveur prod
+  (`investigate-hotel-booking.yml`, run
+  [#31588547384](https://github.com/caractere-swiss/breval-wordpress/actions/runs/31588547384)
+  vert, aucune mutation).
+  - **3 écarts trouvés vs brief, tranchés par le chat stratégie (échange du
+    même jour) :**
+    1. **Médiathèque vide (0 attachments)** — les 13 photos Lot 1 ne sont que
+       des fichiers statiques du thème (`assets/images/lot-1/`), jamais en
+       médiathèque. Solution retenue : import via `wp media import` depuis les
+       fichiers déjà déployés sur le serveur (pas de re-upload). **Le thème
+       reste la source de vérité** — `/courte-duree/` continue de pointer sur
+       les fichiers statiques, la médiathèque n'est qu'une copie au service de
+       la galerie Hotel Booking. ⚠️ **Conséquence à retenir** : au prochain
+       remplacement d'une photo Lot 1, **les deux emplacements** (fichiers
+       thème + médiathèque) devront être mis à jour, sinon divergence.
+    2. **`wp user list` = 1 seul compte** (cc-admin), alors que le brief
+       (§4.1) citait `contact@devecom.ch` et `muller@breval.net` comme
+       « non tranchés ». **CLOS** — le chat stratégie confirme : ces comptes
+       appartenaient au WordPress "starter" auto-provisionné par ex2 (base
+       `vwfewhpb_10u9oNU`), supprimé par Ilias le 07.07.2026 avant la Phase A.
+       Le brief reprenait un fait daté du 07.07 sans revérification. **§4.1 du
+       brief BS-T5 caduc, ne pas ré-instruire ce point dans un futur chat.**
+    3. **Hotel Booking Lite n'a pas de champ structuré** pour lits
+       multiples/chambres/salles de bain (vérifié dans le code — un seul champ
+       texte "bed type"). Formulation exacte imposée par le chat stratégie,
+       mise dans la description de l'hébergement (pas de champ inventé) :
+       « Le logement accueille jusqu'à 5 personnes : une chambre avec un lit
+       double, une chambre avec un lit simple, et un lit double escamotable
+       dans le salon. » — **sans** surface ni nb de salles de bain (déjà
+       affichés sur `/courte-duree/`, doublon proscrit).
+  - **3 ajouts demandés par le chat stratégie avant tout push :**
+    a. `/reservation/` en **noindex** (`_seopress_robots_index=yes`) tant que
+       `/conditions-de-reservation/` n'est pas publiée (7 valeurs encore en
+       attente du client, dont l'annulation). **À retirer manuellement** dès
+       publication de la page de conditions — le script ne le fait jamais
+       tout seul.
+    b. Coexistence des deux parcours sur `/courte-duree/` : bouton principal
+       vers `/reservation/`, formulaire de demande manuelle relégué sous
+       `<details>` (repli, pas de second CTA pleine largeur concurrent).
+    c. E-mails de test : rapporter le retour brut de `wp_mail()` sans
+       l'interpréter comme une réception confirmée — vérification réelle en
+       webmail = Ilias.
+  - **ACF Pro** : reconfirmé 6.8.5 (zip du repo ET diagnostic serveur
+    concordants) — toujours **BLOQUÉ**, `update-acf-pro.yml` non relancé (la
+    6.8.5 déjà en place n'est pas la vulnérabilité corrigée).
+  - **Diff prêt, non pushé** : `templates/pages/page-reservation.php` (gabarit
+    pp-*), lien vers `/reservation/` sur `/courte-duree/`,
+    `.github/scripts/install-hotel-booking.sh` + `setup-hotel-booking.sh` +
+    `.github/workflows/setup-hotel-booking.yml` (idempotents). **GO explicite
+    d'Ilias requis avant tout déploiement** (garde-fou permanent du chat
+    BS-T1) — demandé, en attente au moment de cette entrée.
+
 - 2026-07-21 — **🟢 Deploy bascule formulaires → `contact@breval.net` (eb25b99)
   · ⛔ ACF Pro 6.8.6 BLOQUÉ (endpoint mort).**
   GO explicite Ilias sur les deux points.
