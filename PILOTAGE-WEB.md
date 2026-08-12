@@ -33,6 +33,34 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-12 — **🟢 ACF Pro 6.8.5 → 6.8.7 déployé — vulnérabilité Wordfence du 16.07 fermée (e08751f → e53feec).**
+  Feu vert technique du chat stratégie, avec correction de la règle : « 6.8.6
+  OU PLUS RÉCENT », pas « exactement 6.8.6 ». Zip 6.8.7 fourni par Ilias
+  depuis son poste (chemin kDrive local, jamais commité par lui sur GitHub —
+  vérifié : `git log` sur `advanced-custom-fields-pro.zip` ne montrait que
+  l'upload d'origine 6.8.5 avant mon intervention).
+  - **Contrôle avant tout commit** (piège rappelé par le chat stratégie : un
+    nom de fichier n'est pas un numéro de version) : `acf.php` et
+    `readme.txt` annoncent 6.8.7 dans les deux cas, 715 entrées, `testzip`
+    propre, md5 `fb68c758ddc1be19a279b004fb3cf332` (9 699 419 octets) —
+    **identique avant et après copie**, transport intègre. Commit `e08751f`.
+  - **`update-acf-pro.yml` corrigé avant de le lancer** (`e53feec`) :
+    tel quel, il aurait échoué dès la 1ère étape — retente
+    `connect.advancedcustomfields.com`, confirmé mort (404) depuis le
+    21.07.2026, 2 tentatives déjà enregistrées. Ajout d'une vérification qui
+    saute le téléchargement quand un zip valide ≥ 6.8.6 est déjà commité
+    (logique testée localement contre le vrai fichier avant push).
+  - **Séquence exécutée** : sauvegarde UpdraftPlus (run
+    [#31602667960](https://github.com/caractere-swiss/breval-wordpress/actions/runs/31602667960),
+    `success:1`, nouveau `backup_time`) → `update-acf-pro.yml` (run
+    [#31602817944](https://github.com/caractere-swiss/breval-wordpress/actions/runs/31602817944),
+    téléchargement sauté comme prévu) → **version confirmée par WordPress
+    lui-même** (pas le zip) : `wp plugin get` rapporte
+    **« Version avant : 6.8.5 -> après : 6.8.7 »** → `/`, `/courte-duree/`,
+    `/longue-duree/` revérifiées en direct : contenu ACF identique à avant
+    (descriptions, "En bref", chambres et loyers de la colocation, etc.),
+    aucune régression.
+
 - 2026-08-12 — **🟢 QA publique BS-T5 (chat stratégie) — 3 suites traitées (510d86b).**
   QA externe verte : `/reservation/` 200, un seul h1, noindex actif, tunnel FR,
   zéro placeholder ; `/courte-duree/` un seul h1, bouton principal clair.
