@@ -33,6 +33,67 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-12 — **🟢 Deploy BS-T5 — Hotel Booking Lite en production, tunnel testé de bout en bout (afde26a → f1845bc).**
+  GO explicite Ilias (« C'est moi, Ilias, qui te le confirme directement. »),
+  après contradiction réglée avec le chat stratégie sur qui donnait le go
+  (le chat stratégie avait refusé de le faire à la place d'Ilias pour une
+  action sur site public — signalé, clarifié, confirmé par Ilias en direct).
+  - **Sauvegarde UpdraftPlus déclenchée avant intervention**
+    (`backup-updraftplus.yml`, run
+    [#31593742107](https://github.com/caractere-swiss/breval-wordpress/actions/runs/31593742107)) :
+    déclenchement via `global $updraftplus->backup_all()` (code réel du
+    bouton "Backup Now", pas de commande wp-cli officielle côté plugin).
+    Statut brut confirmé : `success:1`, 6 composants (plugins/thèmes/
+    uploads/mu-plugins/others/db), nonce `fba3b8694812`.
+  - **Déploiement thème** (`deploy.yml`, run
+    [#31593835713](https://github.com/caractere-swiss/breval-wordpress/actions/runs/31593835713)) :
+    page `/reservation/`, lien principal depuis `/courte-duree/`, formulaire
+    manuel relégué sous `<details>`. 5 pages existantes + `/reservation/`
+    revérifiées 200 après coup.
+  - **Config wp-cli** (`setup-hotel-booking.yml`) — **2 bugs trouvés et
+    corrigés en direct pendant le déploiement**, tous deux via
+    `investigate-hotel-booking.yml` (lecture seule) + repro sur la page
+    live :
+    1. **`mphb_season_prices` mal formaté** — le wrapper
+       `items`/`last_index`/`default` est le format du **formulaire admin**
+       (`complex-vertical-field.php`), pas celui lu en base :
+       `rate-repository.php::mapPostToEntity()` itère la valeur meta
+       directement comme un tableau plat de lignes `{season, price}`.
+       Symptôme repro live : `Undefined array key` visibles sur
+       `/reservation/`, tarif non affiché. Fix commit `084d2f5` — testé
+       ensuite en vrai (voir plus bas, CHF 555 affiché correctement).
+    2. **`wp post update` sur rerun** — émet "Modèle de page non valide" et
+       retourne un exit code non nul sur cette instance wp-cli quand le
+       meta `_wp_page_template` (imbriqué sous `templates/pages/`) existe
+       déjà sur le post. `set -e` tuait le script avant la réécriture du
+       gabarit (qui, elle, fonctionne toujours par écriture directe en
+       meta). **Même quirk que `setup-mentions-legales.sh`, jamais exercée
+       là-bas faute de 2e run — à surveiller si ce script est un jour
+       relancé.** Fix commit `fdec6e1` (`|| true` explicite, commenté).
+  - **Tunnel testé en réel, de bout en bout** (navigateur, dates
+    20→23.08.2026, 3 nuits) : recherche → résultats (**CHF 555 = 185×3,
+    correct**) → checkout (formulaire 100% en français, traduction FR
+    embarquée dans le plugin) → soumission → **réservation #36 créée,
+    statut `pending`** (confirmation manuelle conforme au réglage) — vérifié
+    via `MPHB()->getBookingRepository()`, pas juste supposé. Client de test :
+    « Test Deploy Ilias » `<contact@breval.net>` (customer ET admin sur la
+    même boîte, pour vérifier les deux gabarits en un seul endroit).
+    ⚠️ **Réception réelle en boîte NON vérifiée** — comme pour le test du
+    21.07, `wp_mail()` n'a pas été ré-instrumenté pour capturer son retour
+    booléen sur cette réservation précise (pas de log SMTP actif côté free
+    WP Mail SMTP). Le code confirmé déclenché : action
+    `mphb_booking_status_changed` → e-mails `admin_pending_booking` +
+    `customer_pending_booking` (2 e-mails attendus dans
+    `contact@breval.net`). **Vérification webmail = Ilias**, ne pas
+    présumer la réception.
+  - **Réservation de test #36 laissée en l'état** (statut `pending`) —
+    contrainte « aucune suppression de contenu » du brief. **Ilias : à
+    trasher/confirmer/ignorer selon préférence**, elle n'affecte rien
+    d'autre.
+  - Reste des réglages appliqués tels quels : voir entrée de prep
+    ci-dessous pour le détail complet (réglages, hébergement, écarts
+    tranchés, ajouts du chat stratégie).
+
 - 2026-08-12 — **BS-T5 Hotel Booking Lite — prep + diff complet, PAS déployé (attente GO Ilias).**
   Brief reçu du chat stratégie (2.solution-web), ticket Zoho BS--T5. Recherche
   effectuée sur le **code source réel** de `motopress-hotel-booking-lite`
