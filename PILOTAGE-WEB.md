@@ -33,6 +33,36 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-12 — **🟢 QA publique BS-T5 (chat stratégie) — 3 suites traitées (510d86b).**
+  QA externe verte : `/reservation/` 200, un seul h1, noindex actif, tunnel FR,
+  zéro placeholder ; `/courte-duree/` un seul h1, bouton principal clair.
+  3 demandes :
+  1. **Réservation de test #36 supprimée définitivement** (`wp post delete
+     --force`, pas de corbeille) — vérifié dans le code avant d'agir
+     (`booking-cpt.php::removeReservedRooms()`, accroché à `delete_post`,
+     jamais à `wp_trash_post()` : une simple mise à la corbeille aurait pu
+     laisser les dates bloquées). Confirmé après coup par une recherche
+     réelle sur les mêmes dates (20→23.08.2026) : la chambre réapparaît
+     disponible. Run
+     [#31596058270](https://github.com/caractere-swiss/breval-wordpress/actions/runs/31596058270)
+     — 0 entrée `mphb_reserved_room` restante.
+  2. **Libellés du repli manuel sur `/courte-duree/`** — "Préférer une
+     demande manuelle par e-mail" → **"Une question avant de réserver ?"** ;
+     "Envoyer la demande" → **"Envoyer le message"**. Vocabulaire interne
+     exposé au visiteur, corrigé. Vérifié live après déploiement.
+  3. **Bug latent de `setup-mentions-legales.sh` corrigé** — même correctif
+     que le fix `fdec6e1` de ce chantier (tolérance sur "Modèle de page non
+     valide" au rerun de `wp post update`). Jamais exercé sur ce script faute
+     de second run, mais aurait cassé le prochain. À reporter par Ilias au
+     skill `2-1-solution-web` comme leçon réutilisable (le pattern est copié
+     sur d'autres clients).
+  - Script un-shot dédié conservé au repo :
+    `.github/scripts/cleanup-test-booking.sh` +
+    `.github/workflows/cleanup-test-booking.yml` (réutilisable si un futur
+    test laisse une réservation à nettoyer).
+  - Hors scope, géré par Ilias : publication `/conditions-de-reservation/` et
+    retrait du noindex — en attente des réponses du client.
+
 - 2026-08-12 — **🟢 Deploy BS-T5 — Hotel Booking Lite en production, tunnel testé de bout en bout (afde26a → f1845bc).**
   GO explicite Ilias (« C'est moi, Ilias, qui te le confirme directement. »),
   après contradiction réglée avec le chat stratégie sur qui donnait le go
