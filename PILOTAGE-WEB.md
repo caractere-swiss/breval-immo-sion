@@ -6,10 +6,179 @@
 ## 1. Brief en cours
 > Les consignes arrivent ici. Statut : à faire / en cours / fait.
 
-(vide — en attente du contenu réel de Luc)
+⚠️ **Ce repo (brouillon Eleventy) est OBSOLÈTE depuis le go-live du 11.07.**
+Le site réel est **WordPress, en production sur https://breval.net/**, dans le
+repo privé `caractere-swiss/breval-wordpress`. Ce fichier reste le canal de
+coordination Claude Code → chat Web, mais tout le travail consigné au journal
+ci-dessous porte sur le site WordPress, pas sur ce brouillon.
+
+**Briefs ouverts — action Ilias, pas Claude Code :**
+- **ACF Pro 6.8.6** : mise à jour bloquée, l'endpoint de téléchargement ACF est
+  mort (404). Ilias télécharge le zip depuis son compte ACF et le committe à la
+  racine de `breval-wordpress` (UI web GitHub, comme pour la 6.8.5) ; le
+  workflow `update-acf-pro.yml` prend le relais ensuite.
+- **Wizards wp-admin** : Wordfence (brute-force / limite de connexion) et
+  Complianz (RGPD) — non scriptables, à lancer en interface.
+- **Réception `contact@breval.net`** : 2 mails de test envoyés le 21.07,
+  livraison inbox jamais confirmée (Claude Code n'a pas accès à la boîte).
 
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
+
+> ⚠️ **Restitution du 2026-08-12** — les 4 entrées du 12.07 marquées
+> « [restituée] » ci-dessous avaient été écrites dans une copie locale kDrive
+> (`2.solution-web/_to_delete/claude-code/PILOTAGE-WEB.md`) **jamais commitée**,
+> puis perdues au vidage de `_to_delete/`. Restituées ici depuis le contexte de
+> la session qui les avait produites. Le fichier canonique est **celui de ce
+> repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
+> jamais par un fichier kDrive isolé.
+
+- 2026-07-21 — **🟢 Deploy bascule formulaires → `contact@breval.net` (eb25b99)
+  · ⛔ ACF Pro 6.8.6 BLOQUÉ (endpoint mort).**
+  GO explicite Ilias sur les deux points.
+  - **Bascule formulaires** : `BREVAL_CONTACT_EMAIL` passe de
+    `agence@caractere.swiss` (adresse de test) à **`contact@breval.net`**
+    (confirmée par Luc). Point unique dans `inc/forms.php` → les **deux**
+    formulaires (Lot 1 « demande de réservation », Lot 2 « être prévenu·e ») en
+    bénéficient sans autre modification. Commentaire périmé corrigé au passage
+    dans `page-lot-2.php`. Commit `eb25b99`, run `deploy.yml`
+    [#29813470703](https://github.com/caractere-swiss/breval-wordpress/actions/runs/29813470703)
+    vert.
+    **Testé en direct après déploiement** (POST réels vers `admin-post.php`,
+    nonces extraits des pages live) : Lot 1 → `302
+    /courte-duree/?breval_form=success` ; Lot 2 → `302
+    /longue-duree/?breval_form=success` — `wp_mail()` renvoie `true` côté
+    serveur dans les deux cas.
+    ⚠️ **Réception inbox NON vérifiée** : aucun accès à `contact@breval.net`
+    depuis Claude Code. Les 2 mails de test portent les objets « [Bréval]
+    Demande réservation Lot 1 — Test Deploy Ilias » et « [Bréval] Être
+    prévenu·e — Lot 2 — Test Deploy Ilias ». **À confirmer par Ilias/Luc** — la
+    chaîne n'est prouvée que jusqu'à la sortie du serveur.
+  - **ACF Pro 6.8.5 → 6.8.6** (alerte Wordfence du 16.07, sévérité moyenne) :
+    **BLOQUÉ**. ACF Pro n'est pas sur wp.org (propriétaire) ; l'installation
+    passe historiquement par le zip licencié committé à la racine du repo.
+    Ilias a demandé de retenter l'endpoint officiel avec le secret
+    `ACF_PRO_KEY` (toujours présent). Workflow un-shot créé et committé
+    (`update-acf-pro.yml` + `.github/scripts/update-acf-pro.sh`, commit
+    `c8cda55`, même pattern que `harden-wp-config.yml` : téléchargement +
+    validation du zip, commit du zip dans le repo pour garder
+    `install-staging.yml` en phase, puis `wp plugin install --force --activate`
+    via tar-over-ssh).
+    **Run [#29813994099](https://github.com/caractere-swiss/breval-wordpress/actions/runs/29813994099)
+    rouge, exit 4.** Réponse de
+    `connect.advancedcustomfields.com/index.php?p=pro&a=download&k=…` =
+    **`404 Not Found` (nginx)**. Échec **distinct** de celui de juillet (403
+    intermittent / `invalid_token`) : cette fois l'endpoint lui-même a disparu,
+    ce n'est plus une intermittence — inutile de réessayer tel quel. Aucune
+    autre URL tentée (pas de devinette sur une API non documentée).
+    **Action Ilias** : télécharger `advanced-custom-fields-pro.zip` (6.8.6)
+    depuis son compte ACF et le committer à la racine de `breval-wordpress` via
+    l'UI web GitHub, comme pour la 6.8.5 — le workflow reste committé et
+    resservira si l'API revient.
+
+- 2026-07-12 — **🟢 Deploy — page Mentions légales + fix hover underline (b43efee, d051110).**
+  GO explicite Ilias sur les deux, déployés à la suite.
+  - **Hover underline** : règle globale `a:hover, a:focus-visible
+    {text-decoration:underline}` retirée de `_reset.scss` (préparée le même
+    jour, voir entrée plus bas) — commit `b43efee`.
+  - **Page `/mentions-legales/`** : gabarit `page-mentions-legales.php` créé,
+    réutilise les composants `pp-*` de la page confidentialité (scope partagé
+    `.legal-notice-doc` dans `_politique-confidentialite.scss`, zéro
+    duplication CSS). Contenu = source complète fournie par Ilias
+    (`breval-mentions-legales.html`, hébergeur Ex2 Inc. rempli), publication
+    directe. Lien ajouté au footer à côté de « Politique de confidentialité »
+    (séparateur ` · `) — commit `d051110`.
+  - **Mécanisme de création de page** : la page elle-même (titre / slug /
+    gabarit / publication) n'existait pas en base — wp-cli ne valide pas les
+    gabarits imbriqués sous `templates/pages/` (même limite que pour accueil /
+    lot-1 / lot-2, cf. journal du 10.07). Un premier essai d'écriture d'un
+    script SSH ad-hoc a été **refusé par le classifieur auto-mode** (mécanisme
+    jamais nommé ni autorisé), comme pour `DISALLOW_FILE_EDIT` plus tôt le même
+    jour. Question posée à Ilias, tranchée : **nouveau workflow committé**
+    `create-mentions-legales.yml` + script
+    `.github/scripts/setup-mentions-legales.sh` (même pattern que
+    `harden-wp-config.yml` : `workflow_dispatch`, idempotent, écriture directe
+    en meta `_wp_page_template`).
+  - **Runs** : `deploy.yml` [#29195086951](https://github.com/caractere-swiss/breval-wordpress/actions/runs/29195086951)
+    puis `create-mentions-legales.yml` [#29195118679](https://github.com/caractere-swiss/breval-wordpress/actions/runs/29195118679)
+    — les deux verts.
+  - **Vérifié en direct** : `/mentions-legales/` → 200, un seul `<h1>Mentions
+    légales</h1>` ; lien footer présent sur la page et sur l'accueil ; CSS live
+    (`dist/main.css`) confirmé sans la règle globale `a:hover,
+    a:focus-visible{text-decoration:underline}`.
+
+- 2026-07-12 — **Brief mentions légales reçu — pas démarré.** _[restituée]_
+  Fichier source `2.solution-web/breval-mentions-legales.html` fourni par
+  Ilias, **complet** (hébergeur Ex2 Inc. rempli, plus aucun placeholder).
+  Consigne : page `/mentions-legales/` réutilisant les styles `pp-*` déjà en
+  place (même thème que la page confidentialité), `<h1>` déjà présent dans la
+  source à garder, **publication directe** (pas de brouillon — contrairement
+  au P1.2 initial qui prévoyait un placeholder hébergeur), lien footer à côté
+  de « Politique de confidentialité », deploy sous GO. **Interrompu avant
+  démarrage** (demande de clôture/relais de chat) — prochaine étape du
+  prochain chat.
+  > ✅ **Soldé** — voir l'entrée « Deploy — page Mentions légales » ci-dessus.
+
+- 2026-07-12 — **Fix préparé, PAS commité — retrait `:hover` underline global.** _[restituée]_
+  Demande Ilias : soulignement au survol « bizarre » sur les boutons et le nom
+  du site dans le menu. Cause : règle globale `a:hover, a:focus-visible
+  {text-decoration:underline}` dans `assets/scss/base/_reset.scss` —
+  s'applique à TOUS les liens, y compris `.brand` (nom du site,
+  `templates/parts/site-header.php:21`) et `.site-nav__link`. Retirée
+  (les 2 sélecteurs + la règle, rien remplacé — chaque composant gère déjà sa
+  propre couleur au hover). Vérifié : ne casse pas les règles dédiées
+  `.site-footer a:hover` et `.pp-contact-line a:hover` (underline volontaire,
+  scoped, indépendantes du reset global) — non touchées. `npm run build` OK.
+  **Modifié uniquement en local kDrive** (`_to_delete/wordpress/assets/scss/
+  base/_reset.scss`), jamais commité ni poussé sur aucun repo/clone. En
+  attente de GO pour commit + push + deploy.
+  > ✅ **Soldé** — commité `b43efee` et déployé le même jour, voir ci-dessus.
+
+- 2026-07-12 — **QA/QC P2 (lecture seule, mandat chat Web) — résultats.** _[restituée]_
+  Mandat : www→non-www, `WP_DEBUG`, Wordfence (édition fichiers + limite
+  connexion), `ACCES.md` gitignoré, Imagify/WebP. Aucun deploy à ce stade
+  (contrôle uniquement) :
+  - **PASS** — www→non-www : redirection 301 déjà vérifiée en place.
+  - **PASS** — `WP_DEBUG` : `false` confirmé en prod (`wp config get
+    --format=json`, la sortie brute était ambiguë sans `--format`).
+  - **GAP réel** — Wordfence : table `wp_wfConfig` **inexistante** en base
+    (`SHOW TABLES LIKE '%wf%'` = vide) → le wizard de sécurité n'a jamais été
+    lancé, aucune limite de tentative de connexion ni configuration
+    brute-force active. Distinct de `DISALLOW_FILE_EDIT` (celui-ci corrigé le
+    même jour, voir entrée suivante) — ce gap-ci reste ouvert, nécessite le
+    wizard Wordfence en wp-admin.
+  - **PASS** — `ACCES.md` : gitignoré (`.gitignore:13`, `git check-ignore`
+    confirmé), aucun fichier `ACCES*` tracké dans l'historique du repo
+    `breval-wordpress`.
+  - **GAP réel** — Imagify/WebP : aucun plugin de compression/WebP installé
+    (liste complète des 9 plugins actifs vérifiée — ACF Pro, Complianz,
+    Imunify Security, SEOPress, UpdraftPlus, Wordfence, WP Mail SMTP ; ni
+    Imagify ni WP Rocket).
+
+- 2026-07-12 — **🟢 Deploy P0 — h1 sémantique + hardening `DISALLOW_FILE_EDIT` (1e7c36f).** _[restituée]_
+  GO explicite Ilias sur les deux points, même deploy.
+  - **h1** : `<div class="pp-hero-title">` → `<h1 class="pp-hero-title">`
+    (`page-politique-confidentialite.php`) — une seule balise `h1`/page.
+    Overrides SCSS explicites ajoutés (`margin: 0 0 16px`, `text-wrap:
+    initial`) pour neutraliser les règles globales `h1{text-wrap:balance}` du
+    thème (`_typography.scss`) — la spécificité de classe gagnait déjà sur
+    les autres propriétés, mais explicite plutôt que de compter dessus.
+  - **`DISALLOW_FILE_EDIT`** : absent de `wp-config.php` en prod (confirmé
+    avant fix — `wp config get` → « constant is not defined »). Ajout direct
+    en SSH ad-hoc **refusé par le classifieur auto-mode** (bypass du
+    pipeline commit/push/deploy.yml explicitement demandé) — corrigé en
+    créant un **nouveau workflow committé** `harden-wp-config.yml` + script
+    `.github/scripts/harden-wp-config.sh` (même pattern que
+    `configure-smtp.yml` : `wp config set` idempotent, cible la racine
+    production `/home/vwfewhpb/public_html`).
+  - **Runs** : `deploy.yml` [#29194229824](https://github.com/caractere-swiss/breval-wordpress/actions/runs/29194229824)
+    + `harden-wp-config.yml` [#29194230506](https://github.com/caractere-swiss/breval-wordpress/actions/runs/29194230506)
+    — les deux verts.
+  - **Vérifié en direct** : `curl` sur `/politique-de-confidentialite/` → 1
+    seul `<h1>`, texte exact. CSS live téléchargé (`dist/main.css`) :
+    `.pp-hero-title{font-size:34px;...text-wrap:initial}` desktop,
+    `font-size:24px` en media mobile — rendu inchangé. `wp config get
+    DISALLOW_FILE_EDIT --format=json` → `true` côté serveur.
 
 - 2026-07-12 — **Fix collision CSS réelle — politique de confidentialité (45919aa).**
   QA (chat Web, `getComputedStyle` confirmé) : titre du hero affiché à la
@@ -617,29 +786,44 @@
 ## 3. Blocages & questions
 > Ce que Claude Code remonte au chat Web.
 
-Aucun blocage technique. `main` propre, déployé (GitHub Pages).
-Wi-Fi/TV et couchages Lot 1 **résolus** (réponses Luc 07.07, intégrées ce jour).
+🟢 **Site WordPress en production sur https://breval.net/ depuis le 11.07.**
+Aucun blocage technique côté code. 5 pages live et vérifiées : accueil,
+`/courte-duree/`, `/longue-duree/`, `/politique-de-confidentialite/`,
+`/mentions-legales/`. Les deux formulaires envoient à `contact@breval.net`.
 
-Restent, tous **non bloquants** :
-- **Photos Lot 2** : attendues fin juillet (placeholders + badge en place).
-- **Lot des photos du 25.06** : à identifier (à quel logement/pièce elles
-  correspondent).
-- **Autres équipements Lot 1** (linge / parking) : à confirmer avec Luc.
-- **Champ « durée souhaitée »** du formulaire Lot 2 (annuel / mensuel) : à
-  confirmer avec Luc.
-- **Feu vert client** : Luc a répondu aux questions factuelles mais n'a **pas**
-  validé formellement l'état actuel (photos + textes). Pas de publication
-  définitive avant son GO.
+**Bloqué — nécessite une action d'Ilias :**
+- **ACF Pro 6.8.6** (alerte Wordfence 16.07, sévérité moyenne) : l'endpoint de
+  téléchargement ACF renvoie 404, la mise à jour automatisée est impossible.
+  Ilias committe le zip depuis son compte ACF → `update-acf-pro.yml` fait le
+  reste.
+- **Wizard Wordfence** : jamais lancé (table `wp_wfConfig` inexistante) → zéro
+  protection brute-force, zéro limite de tentatives de connexion. wp-admin,
+  non scriptable.
+- **Wizard Complianz (RGPD)** : jamais lancé (`cmplz_options` quasi vide, pas
+  de post type `cmplz_document`) → bannière cookies non configurée. wp-admin,
+  non scriptable.
 
-**Chantier WordPress (site final)** — hors ce repo, dans `2.solution-web/wordpress/` :
-- Scaffold thème posé (local). Suite = fonts woff2 à déposer, puis construction
-  section par section après validation maquette.
-- **Serveur en attente** : SSH ex2 inactif (ticket **#441615**). Aucune install
-  WP / WP-CLI / déploiement tant qu'il n'est pas ouvert.
-- Domaine `breval.net` + hébergement ex2 acquis. Réservation Lot 1
-  (MotoPress + Stripe) = sous-phase ultérieure (validation Luc + compte Stripe).
+**À vérifier — hors de portée de Claude Code :**
+- **Réception réelle sur `contact@breval.net`** : 2 mails de test envoyés le
+  21.07, `wp_mail()` OK côté serveur, mais la livraison en boîte n'a jamais
+  été confirmée (aucun accès à cette boîte).
 
-Tout le contenu Lot 1 et la homepage sont rédigés et en ligne (brouillon).
+**Parqués — attente décision ou identifiants d'Ilias, aucune action requise :**
+- WebP / Imagify : aucun plugin de compression installé (srcset seul).
+- reCAPTCHA sur les formulaires (actuel : honeypot + nonce) — clés Google.
+- Site Kit / Analytics — compte Google. ⚠️ si Analytics arrive, revoir Complianz.
+- Backup UpdraftPlus hors-site (actuel : local serveur uniquement).
+- ManageWP · Freshping · URL prod dans Keeper.
+- Réservation Lot 1 (MotoPress + Stripe) : créneau **BS--T5 du 12.08**,
+  checklist préparée par le chat Web (`breval-checklist-stripe.md`).
+
+**Contenu, côté Luc :** photos Lot 2 · lot des photos du 25.06 à identifier ·
+linge / parking Lot 1 · durée minimale Lot 2. (Wi-Fi/TV et couchages Lot 1 :
+**résolus**, réponses Luc du 07.07.)
+
+**Brouillon Eleventy de ce repo :** figé, plus maintenu depuis le go-live. Ses
+`.draft` (Wi-Fi/TV, couchages) sont périmés par rapport à la production — non
+prioritaire, aucune action prévue.
 
 ---
 
