@@ -13,14 +13,20 @@ coordination Claude Code → chat Web, mais tout le travail consigné au journal
 ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 
 **Briefs ouverts — action Ilias, pas Claude Code :**
-- **ACF Pro 6.8.6** : mise à jour bloquée, l'endpoint de téléchargement ACF est
-  mort (404). Ilias télécharge le zip depuis son compte ACF et le committe à la
-  racine de `breval-wordpress` (UI web GitHub, comme pour la 6.8.5) ; le
-  workflow `update-acf-pro.yml` prend le relais ensuite.
 - **Wizards wp-admin** : Wordfence (brute-force / limite de connexion) et
   Complianz (RGPD) — non scriptables, à lancer en interface.
-- **Réception `contact@breval.net`** : 2 mails de test envoyés le 21.07,
-  livraison inbox jamais confirmée (Claude Code n'a pas accès à la boîte).
+- **Wordfence** : mise à jour majeure disponible (8.2.2 → 9.0.0), non
+  installée sur consigne explicite du 27.08 (« ne touche à rien ») — à
+  trancher avec Ilias, hors du périmètre du chantier qui l'a signalée.
+- **Réception `contact@breval.net`** : plusieurs mails de test envoyés depuis
+  le 21.07 (formulaires + tunnel Hotel Booking), livraison inbox jamais
+  confirmée (Claude Code n'a pas accès à la boîte).
+
+**Résolus depuis (ne pas rouvrir) :** ACF Pro → 6.8.7 le 12.08 ; réservation
+Lot 1 (Hotel Booking Lite) → configurée et testée le 12.08 ; cloisonnement
+des deux biens, conditions de réservation Lot 1, date Lot 2 → faits le
+27.08 ; régression de langue (`WPLANG`) → corrigée le 27.08, contrôles 24h/
+72h en cours (voir journal).
 
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
@@ -1257,35 +1263,58 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > Ce que Claude Code remonte au chat Web.
 
 🟢 **Site WordPress en production sur https://breval.net/ depuis le 11.07.**
-Aucun blocage technique côté code. 5 pages live et vérifiées : accueil,
-`/courte-duree/`, `/longue-duree/`, `/politique-de-confidentialite/`,
-`/mentions-legales/`. Les deux formulaires envoient à `contact@breval.net`.
+Aucun blocage technique côté code. 8 pages live et vérifiées : accueil
+(redirige 302 vers `/courte-duree/` depuis le 27.08 — cloisonnement des deux
+biens), `/courte-duree/`, `/longue-duree/`, `/politique-de-confidentialite/`,
+`/mentions-legales/`, `/reservation/`, `/conditions-de-reservation/`. Les
+formulaires + le tunnel Hotel Booking Lite envoient à `contact@breval.net`.
 
 **Bloqué — nécessite une action d'Ilias :**
-- **ACF Pro 6.8.6** (alerte Wordfence 16.07, sévérité moyenne) : l'endpoint de
-  téléchargement ACF renvoie 404, la mise à jour automatisée est impossible.
-  Ilias committe le zip depuis son compte ACF → `update-acf-pro.yml` fait le
-  reste.
 - **Wizard Wordfence** : jamais lancé (table `wp_wfConfig` inexistante) → zéro
   protection brute-force, zéro limite de tentatives de connexion. wp-admin,
   non scriptable.
+- **Wordfence — mise à jour majeure disponible** (8.2.2 → 9.0.0), trouvée le
+  27.08, non installée sur consigne explicite (« ne touche à rien ») — à
+  trancher séparément avec Ilias.
 - **Wizard Complianz (RGPD)** : jamais lancé (`cmplz_options` quasi vide, pas
   de post type `cmplz_document`) → bannière cookies non configurée. wp-admin,
   non scriptable.
+- **Régression de langue** : `WPLANG` corrigé (`fr_FR`) le 27.08 sur GO
+  Ilias, mécanisme réel qui portait fr_FR avant la régression jamais
+  identifié malgré recherche poussée (Complianz écarté par lecture de code).
+  Contrôles de non-régression programmés à 24h (28.08) et 72h (30.08) —
+  consigne stricte : signaler si ça retombe en_US, ne jamais re-corriger en
+  boucle.
+- **Réservation de test #38** : `pending` depuis le 19.08, données
+  visiblement factices (« Luc Luc », e-mail bidon) — probablement un test de
+  Luc jamais nettoyé. Signalée le 27.08, pas supprimée (hors périmètre du
+  chantier qui l'a trouvée).
 
 **À vérifier — hors de portée de Claude Code :**
-- **Réception réelle sur `contact@breval.net`** : 2 mails de test envoyés le
-  21.07, `wp_mail()` OK côté serveur, mais la livraison en boîte n'a jamais
-  été confirmée (aucun accès à cette boîte).
+- **Réception réelle sur `contact@breval.net`** : plusieurs mails de test
+  envoyés depuis le 21.07 (formulaires Lot 1/2 + tunnel Hotel Booking Lite),
+  `wp_mail()` OK côté serveur à chaque fois, mais la livraison en boîte n'a
+  jamais été confirmée (aucun accès à cette boîte).
 
 **Parqués — attente décision ou identifiants d'Ilias, aucune action requise :**
 - WebP / Imagify : aucun plugin de compression installé (srcset seul).
 - reCAPTCHA sur les formulaires (actuel : honeypot + nonce) — clés Google.
 - Site Kit / Analytics — compte Google. ⚠️ si Analytics arrive, revoir Complianz.
-- Backup UpdraftPlus hors-site (actuel : local serveur uniquement).
 - ManageWP · Freshping · URL prod dans Keeper.
-- Réservation Lot 1 (MotoPress + Stripe) : créneau **BS--T5 du 12.08**,
-  checklist préparée par le chat Web (`breval-checklist-stripe.md`).
+
+**Résolus depuis (ne pas rouvrir) :**
+- ACF Pro 6.8.5 → 6.8.7 (12.08) — vulnérabilité Wordfence du 16.07 fermée.
+- Réservation Lot 1 (Hotel Booking Lite, ex-MotoPress + Stripe) : Stripe
+  écarté (aucun paiement en ligne, décision actée), plugin gratuit installé
+  et configuré le 12.08 — virement/paiement à l'arrivée, tunnel testé de
+  bout en bout.
+- UpdraftPlus : nouvelle doctrine actée le 12.08 (capture ponctuelle, pas de
+  sauvegarde régulière ni de destination distante — l'hébergeur assure le
+  régulier). L'ancien parqué « Backup UpdraftPlus hors-site » est caduc :
+  Ilias a explicitement tranché contre une destination distante.
+- Cloisonnement des deux biens, 10 conditions de réservation Lot 1
+  (séance Luc du 20.08), date Lot 2 → 1er janvier 2027 (rénovation cuisine) :
+  faits et vérifiés le 27.08.
 
 **Contenu, côté Luc :** photos Lot 2 · lot des photos du 25.06 à identifier ·
 linge / parking Lot 1 · durée minimale Lot 2. (Wi-Fi/TV et couchages Lot 1 :
