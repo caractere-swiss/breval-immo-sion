@@ -33,6 +33,24 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-27 — **Retour chat stratégie sur la prep BS-T5 27.08 — 2 points traités, toujours PAS déployé.**
+  1. Badge « Photos disponibles dès fin juillet » sur `/longue-duree/` :
+     **retrait pur**, aucune date de remplacement inventée — décision
+     tranchée côté stratégie. Réapparaîtra seul dès réception des vraies
+     photos de Luc (`$hero_image` alors renseigné, ce placeholder ne
+     s'affiche plus). Nettoyage associé : `$mode_bientot`
+     (`cc_lot2_mode_bientot`) devenu mort dans le gabarit — variable
+     retirée, **champ ACF lui-même non touché** (garde-fou).
+  2. **Le noindex de `/reservation/` a TOUJOURS vécu côté SEOPress**
+     (`_seopress_robots_index`, posé par moi-même le 12.08) — jamais de
+     piste « logique thème » explorée de mon côté, contrairement à ce que
+     supposait le texte du brief original. Le chat stratégie signale que sa
+     propre mesure du 20.08 (« aucune empreinte SEOPress/Yoast/RankMath/
+     AIOSEO ») est donc caduque : elle précède la pose du noindex (12.08),
+     ce n'est pas une mesure ratée, juste antérieure au fait. Mon script
+     (`setup-conditions-reservation.sh`) ciblait déjà correctement le bon
+     mécanisme dès l'écriture — rien à corriger sur ce point.
+
 - 2026-08-27 — **BS-T5 27.08 — cloisonnement + conditions Lot 1 + date Lot 2 : diff prêt, PAS déployé (attente GO Ilias).**
   Brief reçu du chat stratégie (2.solution-web), même ticket BS--T5, un seul
   déploiement pour 4 lots. Garde-fous rappelés : GO uniquement dans ce chat,
