@@ -33,6 +33,57 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-27 — **🟢 Deploy BS-T5 27.08 — 4 lots en production, QA brute faite (4602f92 → efdc9b6).**
+  GO explicite Ilias. Sauvegarde UpdraftPlus confirmée avant intervention
+  (`success:1`, nouveau `backup_time`). Thème déployé, page conditions +
+  réglages MPHB créés (run
+  [#33049399756](https://github.com/caractere-swiss/breval-wordpress/actions/runs/33049399756)).
+  - **QA section 6 du brief, résultats bruts, `?qa=270826`** : `/` → 302 non
+    suivi vers `/courte-duree/` (code vérifié, pas juste l'atterrissage) ;
+    `/courte-duree/` un seul h1, 10 conditions présentes, résidu D1 absent,
+    zéro mention colocation/longue durée ; `/longue-duree/` un seul h1,
+    zéro mention courte durée, plus aucune trace de septembre (thème ET
+    meta description), 1er janvier 2027 affiché, badge photos absent ;
+    `/conditions-de-reservation/` 200, un seul h1, zéro placeholder, aucune
+    mention paiement en ligne ; `/reservation/` noindex retiré (`meta
+    robots` = `index, follow`), lien conditions présent, tunnel testé
+    réellement de bout en bout (réservation #41, 555 CHF, statut pending,
+    case conditions obligatoire fonctionnelle, liée à la bonne page) —
+    supprimée après coup (`--force`).
+  - **2 bugs trouvés et corrigés EN COURS DE QA** (pas après coup) :
+    1. `/reservation/` affichait encore "Départ : 10h00" en dur, alors que
+       `mphb_check_out_time` venait de passer à 11:00 dans le même
+       déploiement — divergence silencieuse. Corrigé en lisant les réglages
+       réels en direct (mêmes fonctions que le plugin lui-même), ne peut
+       plus diverger. Lien vers les conditions ajouté au passage (QA §5).
+    2. **`cleanup-test-booking.sh` donnait un faux résultat depuis le
+       12.08** : `wp post list --include=X` n'est pas un filtre WP_Query
+       valide (silencieusement ignoré, le bon est `--post__in`) — la
+       vérification "plus aucune trace" retombait sur tout le post_type
+       sans filtrer par ID. Passé inaperçu le 12.08 par pure coïncidence
+       (une seule réservation existait alors). Découvert en nettoyant la
+       #41 : le script a rapporté un échec alors que la suppression avait
+       réellement réussi (`wp post delete` avait renvoyé "Success"). Corrigé
+       (`wp post get`, qui échoue franchement sur un ID absent).
+  - ⚠️ **Découverte majeure, HORS PÉRIMÈTRE de ce brief, signalée sans
+    y toucher** : `get_locale()` renvoie **`en_US`**, `<html lang="en-US">`
+    — le site entier a basculé en anglais pour tout ce qui dépend de la
+    locale WP (widgets Hotel Booking Lite : "Check-in", "Adults", "Book"...).
+    Le contenu du thème reste en français (les chaînes `breval` ont le
+    français comme texte SOURCE, pas une traduction — donc insensibles à la
+    locale). **Confirmé fr_FR le 12.08** (tout le tunnel s'affichait alors
+    en français) — le changement s'est donc produit ENTRE le 12.08 et le
+    27.08, cause inconnue, aucun de mes scripts ne touche WPLANG/locale.
+    **Pas corrigé** — décision hors du périmètre de ce brief, à trancher
+    par Ilias/chat stratégie avant toute action.
+  - ⚠️ **Réservation #38 découverte, non touchée** : `pending` depuis le
+    19.08, dates déjà passées (21→23.08), client « Luc Luc
+    <fhjj@gdfh.fr> » — signature typique d'un test de Luc lui-même sur le
+    tunnel, jamais confirmée ni nettoyée. Signalée, pas supprimée (pas la
+    mienne, hors périmètre).
+  - E-mails du test #41 déclenchés côté code (admin + client, tous deux
+    `contact@breval.net`) — réception non vérifiée, comme toujours.
+
 - 2026-08-27 — **Retour chat stratégie sur la prep BS-T5 27.08 — 2 points traités, toujours PAS déployé.**
   1. Badge « Photos disponibles dès fin juillet » sur `/longue-duree/` :
      **retrait pur**, aucune date de remplacement inventée — décision
