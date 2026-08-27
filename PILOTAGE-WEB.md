@@ -33,6 +33,29 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-27 — **🟢 Régression de langue corrigée — `WPLANG` -> `fr_FR`, vérifié indépendamment (dd02f86, run #33052302606).**
+  GO explicite Ilias. `wp option update WPLANG fr_FR` exécuté — n'explique
+  toujours pas ce qui portait fr_FR le 12.08 (mécanisme non identifié malgré
+  recherche exhaustive, cf. entrée précédente), établit un mécanisme
+  standard et explicite à la place.
+  **Vérifié indépendamment, pas seulement le succès de la commande** (exigé
+  par le chat stratégie) : navigateur, requête neuve (`?qa=270826lang`),
+  `<html lang>` = `fr-FR`, et libellés publics de `/reservation/` relus en
+  direct — "Les champs obligatoires sont suivis de *", "Arrivée *",
+  "Départ *", "Adultes", "Enfants" : entièrement en français, conforme au
+  12.08. Les 6 pages du site toujours vertes après le changement.
+  **Contrôle de non-régression programmé** (demande explicite : 24h puis
+  72h, remonter sans re-corriger en boucle si ça retombe en_US) : deux
+  tâches planifiées one-shot créées, `breval-locale-check-24h` (28.08.2026
+  10h00) et `breval-locale-check-72h` (30.08.2026 10h00), chacune
+  autonome et auto-suffisante — relance `investigate-site-locale.yml`
+  (lecture seule), lit `get_locale()`, journalise ici le résultat. Consigne
+  explicite dans les deux : ne jamais relancer le correctif elles-mêmes,
+  seulement signaler si régression confirmée.
+  **Wordfence : non touché**, comme demandé — signalé séparément (mise à
+  jour majeure disponible 8.2.2 → 9.0.0), à trancher avec Ilias hors de ce
+  sujet.
+
 - 2026-08-27 — **Régression de langue — mécanisme réel introuvable malgré recherche honnête, RIEN corrigé (51fac27 → 6c08399).**
   Question directe du chat stratégie : « WPLANG absent le 12.08 » était-il
   mesuré ou déduit ? **Mesuré** — log archivé du 12.08, même message d'erreur
