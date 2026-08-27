@@ -33,6 +33,65 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-27 — **Régression de langue — diagnostic lecture seule fait, RIEN corrigé (db7af7b, run #33050597436).**
+  Demande explicite du chat stratégie : mesurer et rapporter brut, ne rien
+  corriger sans GO dédié. Script `investigate-site-locale.sh` — aucune
+  mutation (audité : uniquement `option get`, `core version`, `plugin
+  list`, `language plugin list`, `eval` en lecture, `find`/`ls`/`stat`).
+  - **WPLANG** : absent en base (`wp option get` échoue), comme au 12.08 —
+    inchangé, jamais eu de valeur explicite.
+  - **wp-config.php** : aucune constante WP_LANG/WPLANG, mtime 2026-07-12
+    (antérieur à tout ceci, sans rapport).
+  - **wp-content/languages/** : tous les fichiers fr_FR (core, admin,
+    plugins, thèmes) **toujours présents sur disque** — pas de fichier
+    manquant, le rsync --delete du thème (`deploy.yml`, scopé à
+    `wp-content/themes/breval/` uniquement) n'a jamais pu les toucher, et
+    de fait ne les a pas touchés. Le dossier `languages/` lui-même et de
+    nombreux fichiers fr_FR portent la date **21.08.2026 19:03** (rafraîchi,
+    pas supprimé).
+  - **Historique de versions** : `wp core version` = **7.1**.
+    `wp-includes/version.php` daté **20.08.2026 09:05** — une mise à jour
+    core a eu lieu ce jour-là (version antérieure non connue, jamais
+    mesurée explicitement avant). `wp-content/upgrade/` (dossier de
+    transit des mises à jour) daté **21.08.2026 19:03** — même horodatage
+    que le rafraîchissement des fichiers de langue, cohérent avec une tâche
+    cron de rafraîchissement des traductions le lendemain de la mise à jour
+    core. Plugins : ACF (6.8.7→6.8.8 disponible), Complianz (7.5.7.2→7.6.4
+    disponible), SEOPress (10.0.2→10.1 disponible), UpdraftPlus
+    (1.26.5→1.26.7 disponible), Wordfence (8.2.2→**9.0.0** disponible,
+    changement de version majeure) — **aucun installé**, tous encore sur
+    leur version du 12.08. Seule exception : **imunify-security 4.0.2 →
+    4.1.0**, déjà auto-mis à jour (plugin lié à l'hébergeur, hors du
+    contrôle WP core/site).
+  - **Locale spécifique Hotel Booking Lite** : `apply_filters(
+    'plugin_locale', get_locale(), 'motopress-hotel-booking' )` = `en_US`
+    (pas de filtre tiers qui la changerait — aucun plugin multilingue actif,
+    confirmé). `wp language plugin list` pour ce plugin **ne liste PAS
+    fr_FR du tout** (seulement cs_CZ/da_DK/en_US actif/es_CL/es_ES/it_IT/
+    ru_RU/sk_SK/uk) — le fr_FR qui s'affichait le 12.08 vient exclusivement
+    du fichier **embarqué dans le zip du plugin lui-même**
+    (`languages/motopress-hotel-booking-fr_FR.mo`, jamais installé comme
+    "language pack" séparé via wp-cli/WP.org). `is_textdomain_loaded(
+    'motopress-hotel-booking' )` = **false** — cohérent avec une locale
+    en_US : WordPress ne cherche/charge un .mo QUE si la locale differe de
+    la langue source (anglais), donc ce "false" est une CONSÉQUENCE de
+    la locale, pas un problème séparé.
+  - **Corrélation constatée, PAS de causalité affirmée** : la valeur
+    WPLANG est vide (→ défaut en_US) au moment de ce diagnostic ; une mise
+    à jour du cœur WordPress (vers 7.1) a eu lieu le 20.08 ; un
+    rafraîchissement des fichiers de traduction a suivi le 21.08. Ces trois
+    faits sont datés dans la même fenêtre que la régression (fr_FR
+    confirmé le 12.08, en_US confirmé le 27.08). Aucune preuve directe que
+    la mise à jour core est la cause du changement de langue — seulement
+    une coïncidence temporelle documentée.
+  - **Correctif, chiffré, PAS exécuté** : `wp option update WPLANG fr_FR`
+    (ou `wp site switch-language fr_FR`) — tous les fichiers fr_FR
+    nécessaires sont déjà sur disque et à jour (21.08), aucune réinstallation
+    de pack de langue requise. Effort : quelques secondes, une seule valeur
+    d'option modifiée, réversible trivialement. Ne répond pas à la question
+    de la cause récurrente si un processus automatisé en est responsable.
+    **GO dédié requis avant exécution.**
+
 - 2026-08-27 — **🟢 Deploy BS-T5 27.08 — 4 lots en production, QA brute faite (4602f92 → efdc9b6).**
   GO explicite Ilias. Sauvegarde UpdraftPlus confirmée avant intervention
   (`success:1`, nouveau `backup_time`). Thème déployé, page conditions +
