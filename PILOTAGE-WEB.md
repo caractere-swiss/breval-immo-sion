@@ -33,6 +33,69 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-27 — **BS-T5 27.08 — cloisonnement + conditions Lot 1 + date Lot 2 : diff prêt, PAS déployé (attente GO Ilias).**
+  Brief reçu du chat stratégie (2.solution-web), même ticket BS--T5, un seul
+  déploiement pour 4 lots. Garde-fous rappelés : GO uniquement dans ce chat,
+  aucun paiement en ligne réintroduit, ne pas toucher politique de
+  confidentialité / mentions légales / SMTP / ACF / UpdraftPlus.
+  - **Lot A — cloisonnement** : accueil → 302 (jamais 301) vers
+    `/courte-duree/` via `template_redirect` committé (`inc/redirects.php`),
+    page/gabarit accueil conservés (rien supprimé). Nav réduite à une seule
+    entrée contextuelle (plus « Accueil »), lien logo contextuel (ne pointe
+    plus jamais vers l'autre lot). Footer : colonne « Nos logements »
+    (les deux liens) supprimée, tagline de marque devenue contextuelle.
+    Vérifié : aucun renvoi croisé déjà présent dans le corps des pages
+    Lot 1/Lot 2 elles-mêmes (seuls nav/footer partagés portaient le
+    croisement).
+  - **Lot B — conditions Lot 1** : les 10 conditions tranchées par Luc
+    (séance du 20.08) ajoutées en dur sur `/courte-duree/` (bloc dédié, pas
+    de champ ACF — ce sont des règles de politique, pas des données
+    variables). Page `/conditions-de-reservation/` créée depuis la source
+    validée fournie (`breval-conditions-reservation.html`), système de
+    classes pp-* **dédié** (vocabulaire différent du système partagé
+    mentions-légales/confidentialité — pas de renommage de la source
+    validée). Correctif `|| true` (bug latent wp-cli connu) appliqué dès
+    l'écriture du script, pas après coup.
+    **Réglage natif Hotel Booking Lite trouvé et câblé** (vérifié dans le
+    code, pas supposé) : `mphb_terms_and_conditions_page` +
+    `mphb_open_terms_in_new_window=1` — les DEUX nécessaires
+    (`checkout-view.php::renderTermsAndConditions()` ignore tout le bloc,
+    case à cocher comprise, si le second n'est pas activé et qu'aucun texte
+    inline n'est configuré). Produit une case à cocher **obligatoire**
+    "J'ai lu et j'accepte les conditions" au checkout, liée à la page.
+  - **Correction live découverte** : heure de départ. Posée provisoire à
+    10:00 le 12.08 (`[À CONFIRMER LUC]`), tranchée à **11h00** par Luc —
+    `mphb_check_out_time` sera mis à jour en conséquence (arrivée 16h00 et
+    séjour minimum 2 nuits inchangés, déjà corrects).
+  - **Lot C — date Lot 2** : balayage du dépôt ET de la base (pas que le
+    code) pour "1er septembre" — trouvé et corrigé dans le thème
+    (`page-lot-2.php`, 2 occurrences dont une invisible au grep car coupée
+    par une balise `<sup>`) **et une 3e occurrence trouvée UNIQUEMENT en
+    base** via diagnostic live : la meta description SEOPress de
+    `/longue-duree/` disait encore "Disponible dès septembre" — invisible
+    depuis un grep du repo, corrigée (`update-lot2-meta.sh`). `page-accueil.
+    php` porte aussi la mention mais devient inatteignable via le 302 —
+    laissé tel quel, conforme au raisonnement du brief lui-même.
+    ⚠️ **Non corrigé, signalé plutôt que deviné** : le badge « Photos
+    disponibles dès fin juillet » sur `/longue-duree/` est également
+    obsolète mais ne correspond à aucune date explicitement visée par le
+    brief, et je n'ai aucune nouvelle date de référence pour les photos
+    sous le nouveau calendrier (rénovation cuisine → 01.01.2027) — pas
+    inventé, à trancher par Ilias/Luc.
+  - **Lot D** : phrase résiduelle « Demande de réservation manuelle — nous
+    confirmons... » retirée de `/courte-duree/` (gabarit PHP, confirmé
+    exactement où le brief l'indiquait). `noindex` sur `/reservation/` :
+    mécanisme **déjà connu** (c'est moi qui l'ai posé le 12.08 —
+    `_seopress_robots_index` SEOPress, pas une logique thème comme le brief
+    le supposait) — retrait câblé dans le même script que la création de
+    la page conditions, séquencé après.
+  - **Diff prêt, non pushé** (sauf l'extension du diagnostic lecture seule,
+    déjà poussée et exécutée pour ce repérage — aucune mutation) : 12
+    fichiers, page conditions + SCSS dédiée, redirections, nav/footer
+    cloisonnés, conditions Lot 1, dates Lot 2, réglages MPHB. **GO explicite
+    d'Ilias requis avant tout déploiement** (garde-fou permanent) — demandé,
+    en attente au moment de cette entrée.
+
 - 2026-08-12 — **🟢 UpdraftPlus — nouvelle doctrine appliquée : capture ponctuelle, plus de sauvegarde régulière (df8dc10 → 2994b1f).**
   Décision Ilias : l'hébergeur assure déjà le régulier (ex2 : 1er/14 du mois +
   7 derniers jours, JetBackup/cPanel ; Infomaniak sur le reste du parc).
