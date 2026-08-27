@@ -33,6 +33,41 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-27 — **Régression de langue — mécanisme réel introuvable malgré recherche honnête, RIEN corrigé (51fac27 → 6c08399).**
+  Question directe du chat stratégie : « WPLANG absent le 12.08 » était-il
+  mesuré ou déduit ? **Mesuré** — log archivé du 12.08, même message d'erreur
+  "Could not get 'WPLANG' option" ce jour-là. Mais la question logique
+  derrière est juste et reste sans réponse : WPLANG absent + site en fr_FR
+  ce jour-là = autre chose portait la locale. Recherché sans rien exécuter :
+  - **mu-plugins** : un seul fichier actif (`imunify-security-bots.php`,
+    lié à l'hébergeur), aucune mention de "locale" dedans.
+  - **Drop-ins racine `wp-content/`** : seulement `maintenance.php` et
+    `index.php`, standards, sans rapport.
+  - **Filtre `locale`** : 2 callbacks réellement accrochés —
+    `WP_Locale_Switcher::filter_locale` (cœur WP, passe-plat hors bascule
+    active) et **`cmplz_set_plugin_language`** (Complianz). **Écarté après
+    lecture du code réel installé** (Complianz est premium, pas sur
+    wordpress.org — lu directement sur le serveur,
+    `wp-content/plugins/complianz-gdpr-premium/functions.php:1432`) : cette
+    fonction ne force `en_US` que si `$_GET['clang'] === 'en'` est présent
+    dans l'URL — jamais le cas dans mes tests (`?qa=270826`, etc.). Aucun
+    des deux callbacks n'explique le en_US observé.
+  - **Filtre `pre_determine_locale`** : aucun callback accroché.
+  - **Override direct de `$GLOBALS['locale']`** (technique fréquente,
+    invisible depuis l'inspection des filtres) : recherché dans tout
+    plugins/thèmes/mu-plugins actifs, **aucune occurrence trouvée**.
+  - **Chargement de traduction propre à Hotel Booking Lite** : vérifié dans
+    son code (`plugin.php::loadTextDomain()`) — utilise `determine_locale()`
+    standard + le filtre `plugin_locale`, déjà mesuré à `en_US` en amont
+    (aucun mécanisme distinct côté plugin).
+  - **Conclusion honnête** : après ce passage en revue de tous les
+    mécanismes standards de résolution de locale WordPress, **la cause
+    réelle de ce qui portait fr_FR le 12.08 reste non identifiée.** Le
+    correctif proposé (`wp option update WPLANG fr_FR`) ne restaurerait donc
+    pas un mécanisme retrouvé — il en établirait un nouveau, standard et
+    explicite, en l'absence d'explication pour l'ancien. Toujours **PAS
+    exécuté**, GO d'Ilias attendu.
+
 - 2026-08-27 — **Régression de langue — diagnostic lecture seule fait, RIEN corrigé (db7af7b, run #33050597436).**
   Demande explicite du chat stratégie : mesurer et rapporter brut, ne rien
   corriger sans GO dédié. Script `investigate-site-locale.sh` — aucune
