@@ -39,6 +39,18 @@ des deux biens, conditions de réservation Lot 1, date Lot 2 → faits le
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-28 — **🟢 Contrôle 24h de non-régression : langue stable en `fr_FR` (run #33203652726).**
+  Tâche planifiée `breval-locale-check-24h`, exécutée en autonomie.
+  `investigate-site-locale.yml` relancé (lecture seule, aucune écriture sur
+  le site), run terminé en 37 s le 28.08 à 19h23 UTC. Résultats : section 1
+  option `WPLANG` en base = `fr_FR`, section 1bis `get_locale()` PHP live =
+  `fr_FR`. Le correctif du 27.08 tient à +24h. Aucune constante `WP_LANG` /
+  `WPLANG` dans `wp-config.php` (inchangé depuis le 12.07), fichiers de
+  langue `fr_FR` toujours en place (datés du 21.08). Rien à corriger, rien
+  re-exécuté — conforme à la consigne (remonter, ne pas re-corriger en
+  boucle). Prochain jalon : contrôle 72h, tâche `breval-locale-check-72h`
+  (30.08.2026 10h00).
+
 - 2026-08-27 — **🟢 Régression de langue corrigée — `WPLANG` -> `fr_FR`, vérifié indépendamment (dd02f86, run #33052302606).**
   GO explicite Ilias. `wp option update WPLANG fr_FR` exécuté — n'explique
   toujours pas ce qui portait fr_FR le 12.08 (mécanisme non identifié malgré
