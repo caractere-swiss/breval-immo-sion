@@ -13,20 +13,20 @@ coordination Claude Code → chat Web, mais tout le travail consigné au journal
 ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 
 **Briefs ouverts — action Ilias, pas Claude Code :**
-- **Wizards wp-admin** : Wordfence (brute-force / limite de connexion) et
-  Complianz (RGPD) — non scriptables, à lancer en interface.
-- **Wordfence** : mise à jour majeure disponible (8.2.2 → 9.0.0), non
-  installée sur consigne explicite du 27.08 (« ne touche à rien ») — à
-  trancher avec Ilias, hors du périmètre du chantier qui l'a signalée.
+- **Wizard wp-admin Complianz** (RGPD) : non scriptable, à lancer en interface.
 - **Réception `contact@breval.net`** : plusieurs mails de test envoyés depuis
   le 21.07 (formulaires + tunnel Hotel Booking), livraison inbox jamais
-  confirmée (Claude Code n'a pas accès à la boîte).
+  confirmée par Claude Code (pas d'accès à la boîte) — filet BCC
+  `agence@caractere.swiss` posé le 30.08 (voir journal BS-T1), 2 mails de
+  test frais envoyés le 30.08 à vérifier côté webmail par Ilias.
 
 **Résolus depuis (ne pas rouvrir) :** ACF Pro → 6.8.7 le 12.08 ; réservation
 Lot 1 (Hotel Booking Lite) → configurée et testée le 12.08 ; cloisonnement
 des deux biens, conditions de réservation Lot 1, date Lot 2 → faits le
 27.08 ; régression de langue (`WPLANG`) → corrigée le 27.08, contrôles 24h/
-72h en cours (voir journal).
+72h passés, série close ; Wordfence → désinstallé le 30.08 (BS-T1, jamais
+configuré, en retard, décision Ilias) ; réservation de test #38 → purgée le
+30.08.
 
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
@@ -38,6 +38,62 @@ des deux biens, conditions de réservation Lot 1, date Lot 2 → faits le
 > la session qui les avait produites. Le fichier canonique est **celui de ce
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
+
+- 2026-08-30 — **🟢 BS-T1 déployé — 8 lots traités, GO explicite d'Ilias reçu et exécuté dans l'ordre convenu.**
+  Ordre exécuté : sauvegarde UpdraftPlus → déploiement A/D/G → Wordfence (E)
+  → suppression #38+#39 (F) → mails de test (G2) → QA groupée (H). Deux
+  limites d'hébergement découvertes en cours de route (non liées au brief,
+  documentées pour la prochaine fois) : `proc_open()`/`proc_close()`
+  désactivés sur ex2 → `wp db query`, `wp plugin uninstall` ET
+  `wp plugin delete` échouent tous les trois avec la même erreur
+  ("Cannot do 'launch'") ; contournés respectivement par `wp eval` + `$wpdb`
+  et par suppression directe du dossier plugin. L'IP du runner GitHub
+  Actions s'est fait rate-limiter (429) par l'hébergeur après plusieurs runs
+  rapprochés — vérifié indépendamment depuis une IP externe à chaque fois,
+  jamais une vraie casse du site.
+  - **Sauvegarde** : `success:1`, nouveau `backup_time` (run
+    [#33316388366](https://github.com/caractere-swiss/breval-wordpress/actions/runs/33316388366)),
+    tous les composants présents (plugins/thèmes/uploads/mu-plugins/autres/db).
+  - **Lot A** : déployé, `<abbr title="obligatoire">` confirmé en live sur
+    `/reservation/` (override `hotel-booking/required-fields-tip.php`).
+  - **Lot B** : conforme, rien déployé.
+  - **Lot C** : déjà conforme, rien déployé.
+  - **Lot D** : déployé (`page-accueil.php`) — page non atteignable par un
+    visiteur (redirection 302 de l'accueil vers `/courte-duree/`, cloisonnement
+    du 27.08), correction de cohérence du code source plutôt que fix visible.
+  - **Lot E** : Wordfence désinstallé (fichiers + 7 options `wordfence*`
+    supprimées manuellement, `wp plugin uninstall`/`delete` cassés sur cet
+    hôte). Vérifié après coup : plus dans la liste des plugins, aucun
+    `wordfence-waf.php`, aucune règle `.htaccess`, aucune table `wf*`, 6
+    pages en 200 (confirmé depuis IP externe après les faux 429 du runner).
+  - **Lot F** : réservation #38 supprimée définitivement (`--force`),
+    `mphb_reserved_room` #39 déjà nettoyée par le hook `delete_post` de la
+    réservation parente (revérifié à 0 entrée liée). Recherche réelle
+    post-suppression : dates d'origine (21→23.08) déjà passées, impossibles
+    à re-tester via le widget public (rejette toute date passée) — recherche
+    de non-régression faite sur une fenêtre future comparable
+    (09→12.09.2026), confirmée "chambre trouvée" depuis IP externe.
+  - **Lot G** : filet BCC `agence@caractere.swiss` en place — headers directs
+    sur les 2 formulaires thème, filtre `wp_mail` scopé aux actions
+    `mphb_before_send_mail`/`mphb_after_send_mail` pour Hotel Booking
+    (jamais les mails système du cœur). 2 mails de test envoyés le 30.08 à
+    14h34 et 14h35 UTC (sujets « TEST BS-T1 30-08-2026 16h34/16h35 »)
+    via les formulaires Lot 1 (`/courte-duree/`) et Lot 2 (`/longue-duree/`)
+    — départ confirmé côté serveur (`wp_mail()` a retourné vrai), **réception
+    dans les boîtes contact@breval.net / agence@caractere.swiss non vérifiée
+    par Claude Code** (pas d'accès aux boîtes), à Ilias de confirmer.
+  - **Lot H** : QA groupée faite sur les 6 pages avec cache-buster frais —
+    toutes en 200 (accueil en 302 vers `/courte-duree/`, jamais 301), un seul
+    `<h1>` chacune, `lang="fr-FR"` partout, aucune chaîne anglaise résiduelle
+    trouvée, aucun placeholder visible (seuls hits : attributs HTML
+    `placeholder` de formulaire et le bloc photo "à venir" du Lot 2, tous les
+    deux attendus/hors périmètre), mentions "colocation" sur les pages
+    légales toutes légitimes (texte de portée juridique générique, aucun
+    lien croisé vers `/longue-duree/`), `/reservation/` sans noindex et dans
+    le sitemap, tunnel parcouru jusqu'à l'étape coordonnées. `get_locale()`
+    final (run
+    [#33317439135](https://github.com/caractere-swiss/breval-wordpress/actions/runs/33317439135)) :
+    **fr_FR**.
 
 - 2026-08-30 — **BS-T1 — 2 corrections du chat stratégie appliquées avant GO (80e1f16), PAS DÉPLOYÉ.**
   Relecture du diagnostic BS-T1 par le chat stratégie, 2 retours avant GO
