@@ -39,6 +39,68 @@ des deux biens, conditions de réservation Lot 1, date Lot 2 → faits le
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-30 — **BS-T1 finalisation site — diagnostic complet fait, diff prêt pour 3 lots, PAS DÉPLOYÉ (46e3562, attente GO Ilias).**
+  Brief reçu en direct dans le chat Claude Code (chat Web BS-T1), 8 lots,
+  un seul déploiement prévu. Règle #1 du brief : GO de mise en prod
+  uniquement d'Ilias dans ce chat après diff + tests — respectée, rien
+  déployé. Résultats bruts par lot :
+  - **Lot A — « required » anglais résiduel** : confirmé et isolé dans le
+    code du plugin motopress-hotel-booking-lite 6.2.3 (téléchargé et
+    inspecté en local, PAS sur le site) —
+    `templates/required-fields-tip.php` contient `<abbr title="required">`
+    en dur, sans passer par `__()`/`_e()`, donc intraduisible par fichier
+    de langue. Seul ce point ; le reste du tunnel (checkout) utilise déjà
+    `esc_html_e( 'Required', ... )` correctement traduit en base. Corrigé
+    proprement par override de gabarit thème
+    (`hotel-booking/required-fields-tip.php`, chargé par
+    `mphb_get_template_part()`/`locate_template()` avant le plugin —
+    survit aux mises à jour). Balayage de la page : aucune autre chaîne
+    anglaise trouvée en DOM rendu ; **« Open Source Software » signalé par
+    le chat Web introuvable** sur `/reservation/` (page de recherche et
+    étape coordonnées), en HTML brut comme en DOM rendu — non reproduit,
+    à préciser où il a été vu avant d'y toucher.
+  - **Lot B — case d'acceptation des conditions** : **présente**, prouvée
+    en direct à l'étape coordonnées du tunnel (recherche réelle 9→12
+    septembre 2026 puis clic Réserver) — checkbox
+    `mphb_accept_terms`, `required`, libellé et lien
+    `/conditions-de-reservation/` tous corrects en français. **Rien à
+    faire.**
+  - **Lot C — noindex de `/reservation/`** : postmeta
+    `_seopress_robots_index` **déjà absente** en base (page #35), meta
+    robots rendue en live = `index, follow, ...`, page déjà présente dans
+    `page-sitemap1.xml`. **Déjà conforme à la décision du 30.08, rien à
+    déployer.**
+  - **Lot D — dates caduques** : recherche DB (postmeta SEOPress +
+    post_content, toutes pages) → aucune ligne. La chaîne « 1er septembre »
+    trouvée était **dans le thème**, pas en base — badge Lot 2 de la page
+    d'accueil (`page-accueil.php`, deux occurrences), échappé au correctif
+    du 27.08 qui n'avait touché que `page-lot-2.php`. Corrigé → 1er janvier
+    2027.
+  - **Lot E — Wordfence** : diagnostic confirmé — actif 8.2.2 (MAJ 9.0.0
+    dispo), **aucune table `wf*`** (assistant jamais lancé), aucune règle
+    `.htaccess`, aucun `wordfence-waf.php`, aucune constante `WFWAF_*` dans
+    `wp-config.php`. Script de désinstallation propre rédigé (deactivate +
+    uninstall + vérifs post : fichiers résiduels, tables, 6 pages en 200)
+    mais **pas commité/exécuté** (denials du classifieur auto-mode sur
+    l'écriture de ce fichier précis — recommencé au prochain tour).
+  - **Lot F — réservation #38** : **lue, pas supprimée.** Détail brut :
+    statut `pending`, créée le 19.08 13h31, séjour 21→23.08.2026 (déjà
+    passé), prénom/nom "Luc"/"Luc", email `fhjj@gdfh.fr`, tél
+    `0798164861`, note "Fhhu", total CHF370, 1 `mphb_reserved_room` liée
+    (#39). Nom = Luc au sens strict du garde-fou du brief, mais motif
+    évident de test (domaine email inventé, note clavier-mash, dates déjà
+    passées) — tentative de suppression bloquée par le classifieur
+    auto-mode (action irréversible) : **confirmation explicite d'Ilias
+    requise avant exécution**, pas contournée.
+  - **Lot G — filet BCC** : `agence@caractere.swiss` ajouté en BCC de
+    **tout** `wp_mail()` sortant via un filtre générique
+    (`inc/forms.php::breval_bcc_agency`), pas seulement les 2 formulaires
+    — couvre aussi les notifications Hotel Booking. Mails de test à
+    renvoyer après déploiement (Lot G point 2, pas encore fait).
+  - **Lot H — QA finale** : pas encore lancée, dépend du déploiement.
+  Diff Lot A/D/G commité (`46e3562`), `deploy.yml` reste
+  `workflow_dispatch` manuel — aucun auto-déploiement déclenché.
+
 - 2026-08-30 — **🟢 Contrôle 72h de non-régression : langue stable en `fr_FR`, série de contrôles terminée (run #33311576580).**
   Tâche planifiée `breval-locale-check-72h`, exécutée en autonomie.
   `investigate-site-locale.yml` relancé (lecture seule, aucune écriture sur
