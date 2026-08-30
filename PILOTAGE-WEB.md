@@ -39,6 +39,30 @@ des deux biens, conditions de réservation Lot 1, date Lot 2 → faits le
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-08-30 — **BS-T1 — 2 corrections du chat stratégie appliquées avant GO (80e1f16), PAS DÉPLOYÉ.**
+  Relecture du diagnostic BS-T1 par le chat stratégie, 2 retours avant GO
+  (Open Source Software : abandonné, mesure HTML brut/DOM fait foi) :
+  - **Lot G corrigé** : le filtre générique sur `wp_mail` retiré — risque de
+    fuite d'authentification identifié (un lien de réinitialisation de mot
+    de passe de Luc aurait fini en BCC chez l'agence). Remplacé par 2
+    mécanismes ciblés : en-têtes `Bcc` directs sur les 2 formulaires thème
+    (`inc/forms.php`), et un filtre `wp_mail` scopé à la fenêtre des
+    actions `mphb_before_send_mail`/`mphb_after_send_mail` pour les
+    notifications Hotel Booking — jamais déclenchée par les mails système
+    du cœur (vérifié dans le code du plugin : `AbstractEmail::send()`).
+  - **Lot F corrigé** : `cleanup-test-booking.sh` supprime désormais aussi
+    explicitement les `mphb_reserved_room` enfants (--force chacun), au
+    lieu de compter sur le seul hook `delete_post` de la réservation
+    parente — le piège du 12.08 déplacé d'un cran, comme relevé. Recherche
+    réelle post-suppression ajoutée, sur une fenêtre future comparable
+    (les dates d'origine du 21→23.08 étant déjà passées au 30.08, le
+    widget public rejette toute date d'arrivée passée quel que soit l'état
+    du blocage en base — testé et confirmé en local avant d'écrire le
+    script).
+  Toujours PAS déployé — attente du GO d'Ilias, ordre d'exécution convenu :
+  sauvegarde UpdraftPlus → déploiement A/D/G → Wordfence (E) → suppression
+  #38+#39 (F) → mails de test (G2) → QA groupée (H).
+
 - 2026-08-30 — **BS-T1 finalisation site — diagnostic complet fait, diff prêt pour 3 lots, PAS DÉPLOYÉ (46e3562, attente GO Ilias).**
   Brief reçu en direct dans le chat Claude Code (chat Web BS-T1), 8 lots,
   un seul déploiement prévu. Règle #1 du brief : GO de mise en prod
