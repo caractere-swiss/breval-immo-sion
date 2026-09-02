@@ -3,6 +3,13 @@
 > Écrit UNIQUEMENT par Claude Code. Le chat Web lit, n'écrit jamais ici.
 > Fichier hors build Eleventy (racine, hors `src/` → jamais publié).
 
+> ⚠️ **Règle permanente (posée le 02.09.2026, ne pas rouvrir) :** après toute
+> action significative (déploiement, test, purge, correction), le chat
+> Claude Code d'exécution prépare systématiquement un **bloc de rapport prêt
+> à coller** pour le chat stratégie qui pilote ce projet (`2.WEB-BREVAL.md`),
+> même hors clôture de session — pas seulement au moment du relais. Le bloc
+> résume ce qui a été mesuré vs pas mesuré (motif), jamais juste "fait".
+
 ## 1. Brief en cours
 > Les consignes arrivent ici. Statut : à faire / en cours / fait.
 
@@ -38,6 +45,57 @@ configuré, en retard, décision Ilias) ; réservation de test #38 → purgée l
 > la session qui les avait produites. Le fichier canonique est **celui de ce
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
+
+- 2026-09-02 — **🟢 Phase 2 (test réel du tunnel de réservation) faite — GO explicite d'Ilias, absorbe et remplace le lot H.**
+  Consigne du chat Web du 02.09 : succès fonctionnel ≠ conformité d'affichage,
+  les deux mesurés séparément (leçon du 12.08). Avant de lancer les tests,
+  vérification indépendante que la Phase 1 du 30.08 était bien déjà en prod
+  (elle l'était — logs Actions relus : backup, déploiement 80e1f16, 3
+  désinstalls Wordfence jusqu'à 800e22a, purge #38/#39, tout `success`
+  confirmé par relecture séparée, pas seulement le flag).
+  - **2A — parcours réel** (dates futures, 25→27.09.2026, recherche depuis
+    `/courte-duree/`) : tarif 185×2=370 CHF exact. Séjour 1 nuit **impossible
+    à sélectionner** dans le calendrier (case non cliquable, classe
+    "Séjour de moins de min jours", pas un simple rejet au submit — plus
+    strict que prévu) ; 2 nuits accepté. `mphb_accept_terms` non coché →
+    soumission bloquée par validation native (`Veuillez cocher cette case si
+    vous souhaitez continuer.`), lien vers `/conditions-de-reservation/`
+    vérifié. Réservation #43 créée, statut `pending` confirmé en base par
+    lecture séparée (run
+    [#33650841371](https://github.com/caractere-swiss/breval-wordpress/actions/runs/33650841371)).
+    2 mails (notif client à `agence@caractere.swiss`, notif admin à
+    `contact@breval.net`) **reçus et lus** dans la boîte agence (même
+    connecteur Gmail) en ~2s — texte intégralement français, dates longues
+    correctes, montant exact. La notif admin (à `contact@breval.net`) est
+    arrivée dans la boîte agence malgré un To: différent — signal fort que
+    le filet BCC (Lot G) fonctionne et que le SMTP côté serveur délivre bien
+    (pertinent pour le blocage réception ex2, voir §3). Purge #43/#44 en
+    `--force` confirmée (run
+    [#33651115424](https://github.com/caractere-swiss/breval-wordpress/actions/runs/33651115424)),
+    recherche réelle sur les MÊMES dates libérées (pas une fenêtre de
+    contournement) → "1 chambre trouvée du 25 septembre 2026 - au 27
+    septembre 2026" confirmé après purge.
+  - **2B — affichage** : `lang="fr-FR"` sur la page de confirmation, zéro mot
+    anglais relevé à aucune étape (recherche, résultats, coordonnées,
+    confirmation, contenu des 2 mails), dates en format long français,
+    `get_locale()` = fr_FR reconfirmé indépendamment.
+  - **2C — QA 6 pages** : toutes 200 depuis IP externe (pas le runner GH,
+    429 non fiable), `/` en 302 (jamais 301), un seul `<h1>` par page
+    confirmé, aucun `noindex`, `/reservation/` présente dans
+    `page-sitemap1.xml`.
+  - **2D — galerie Lot 1** : 13 photos uniques confirmées (thumbnails 800w
+    ET plein format), toutes 200, visionneuse testée ouverture/fermeture
+    (`.lightbox.is-open` ↔ fermée) sur un cas, fonctionnelle.
+  - **Réserve BCC (wp_mail exception → filtre non détaché)** : **toujours
+    ouverte**, confirmé par lecture directe du code (`inc/forms.php`) —
+    `remove_filter` n'est déclenché que par `mphb_after_send_mail`, aucun
+    filet `add_action( 'shutdown', ... )`. Non bloquant (risque réduit : le
+    filtre est scopé aux hooks mphb, pas global), mais pas corrigé — reste
+    sur la liste, à trancher si le chat stratégie veut le fermer.
+  **Non mesuré** : réception dans la boîte réelle `contact@breval.net` côté
+  interface webmail ex2 (accès hors de portée de Claude Code, cf. §3) ;
+  robustesse serveur si `wp_mail()` lève une vraie exception (scénario pas
+  reproduit, juste lu dans le code).
 
 - 2026-08-30 — **🟢 BS-T1 déployé — 8 lots traités, GO explicite d'Ilias reçu et exécuté dans l'ordre convenu.**
   Ordre exécuté : sauvegarde UpdraftPlus → déploiement A/D/G → Wordfence (E)
@@ -1460,8 +1518,16 @@ formulaires + le tunnel Hotel Booking Lite envoient à `contact@breval.net`.
 **À vérifier — hors de portée de Claude Code :**
 - **Réception réelle sur `contact@breval.net`** : plusieurs mails de test
   envoyés depuis le 21.07 (formulaires Lot 1/2 + tunnel Hotel Booking Lite),
-  `wp_mail()` OK côté serveur à chaque fois, mais la livraison en boîte n'a
-  jamais été confirmée (aucun accès à cette boîte).
+  `wp_mail()` OK côté serveur à chaque fois, mais la livraison en boîte
+  **interface webmail ex2** n'a toujours jamais été confirmée par Ilias
+  (aucun accès à cette boîte depuis Claude Code). Signal indirect nouveau du
+  02.09 : la notif admin de la réservation test #43 (adressée à
+  `contact@breval.net`) est arrivée en ~2s dans la boîte agence via le BCC
+  Lot G — preuve que le SMTP serveur délivre bien jusqu'à un vrai
+  destinataire externe. Ça de-risque la piste "SMTP cassé", mais ne prouve
+  rien sur l'interface webmail ex2 elle-même (IMAP/filtre/dossier
+  indésirables côté ex2 restent possibles) — reste sur la liste, Phase 4 du
+  plan de finalisation.
 
 **Parqués — attente décision ou identifiants d'Ilias, aucune action requise :**
 - WebP / Imagify : aucun plugin de compression installé (srcset seul).
