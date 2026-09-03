@@ -26,6 +26,12 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
   confirmée par Claude Code (pas d'accès à la boîte) — filet BCC
   `agence@caractere.swiss` posé le 30.08 (voir journal BS-T1), 2 mails de
   test frais envoyés le 30.08 à vérifier côté webmail par Ilias.
+- **Cloudflare Turnstile (Lot J, 03.09)** : code posé, **INACTIF** — clés
+  site/secrète pas encore créées par Ilias. ⚠️ Tant que les clés ne sont pas
+  posées (`wp-config.php` ou options `breval_turnstile_site_key` /
+  `breval_turnstile_secret_key`), **les 3 formulaires (Lot 1, Lot 2,
+  coordonnées tunnel) restent SANS protection anti-spam** au-delà du
+  honeypot déjà en place — à ne pas confondre avec un lot livré/actif.
 
 **Résolus depuis (ne pas rouvrir) :** ACF Pro → 6.8.7 le 12.08 ; réservation
 Lot 1 (Hotel Booking Lite) → configurée et testée le 12.08 ; cloisonnement
@@ -33,7 +39,10 @@ des deux biens, conditions de réservation Lot 1, date Lot 2 → faits le
 27.08 ; régression de langue (`WPLANG`) → corrigée le 27.08, contrôles 24h/
 72h passés, série close ; Wordfence → désinstallé le 30.08 (BS-T1, jamais
 configuré, en retard, décision Ilias) ; réservation de test #38 → purgée le
-30.08.
+30.08 ; habillage CSS du tunnel de réservation (Lot I) → déployé le 03.09,
+3 surfaces, 375px + bureau vérifiés, aucun débordement ; résidu anglais
+`<abbr title="required">` sur la page coordonnées (jumeau du bug du 30.08,
+autre gabarit plugin) → corrigé le 03.09.
 
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
@@ -45,6 +54,74 @@ configuré, en retard, décision Ilias) ; réservation de test #38 → purgée l
 > la session qui les avait produites. Le fichier canonique est **celui de ce
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
+
+- 2026-09-03 — **🟢 Brief habillage-tunnel déployé — Lots I/J/K, GO explicite d'Ilias, ajout Lot A-bis en cours de session.**
+  Brief `2.solution-web/breval-brief-BS-T1-habillage-tunnel.md`. Ordre exécuté :
+  sauvegarde UpdraftPlus (run
+  [#33759971695](https://github.com/caractere-swiss/breval-wordpress/actions/runs/33759971695))
+  → déploiement (`846bf32`, run
+  [#33760122926](https://github.com/caractere-swiss/breval-wordpress/actions/runs/33760122926))
+  → parcours complet rejoué sur le site réel.
+  - **Point technique (dates dupliquées dans l'URL de résultats)** :
+    diagnostiqué, **rien touché** — comportement normal du plugin
+    (`renderDateHiddenInputs()` pose volontairement un champ caché au format
+    ISO sous le même `name=` que le champ visible, confirmé dans le code
+    source de motopress-hotel-booking-lite 6.2.3, la version exacte
+    installée).
+  - **Lot I (habillage CSS)** : `assets/scss/components/_hotel-booking.scss`,
+    cible les classes réelles du plugin (vérifiées sur le HTML live), CSS
+    seul, aucun fichier plugin touché. Neutralise plusieurs `float` hérités
+    du CSS du plugin (`.mphb-recommendation-total`, `.mphb-confirm-reservation`,
+    `.mphb-recommendation-reserve-button`, `.mphb-reservation-details`) via
+    `float:none!important` ciblé — mesuré en local que ces règles (3 classes
+    de spécificité côté plugin) cassaient nos styles avant d'écrire
+    l'override. Zone de clic ≥44px. **Aucun débordement à 375px** vérifié
+    par mesure (`scrollWidth === innerWidth`), en local avant déploiement
+    ET en direct après (3 surfaces).
+  - **Lot A-bis (ajout demandé par Ilias avant déploiement)** : le résidu
+    anglais `<abbr title="required">` trouvé sur la page coordonnées est le
+    jumeau du bug corrigé le 30.08, mais sur un gabarit différent — codé en
+    dur dans une méthode PHP du plugin
+    (`CheckoutView::renderCustomerDetails()`), jamais passé par `__()`, donc
+    ni overridable via `locate_template()` ni interceptable par un filtre
+    `gettext` (rien à traduire). Corrigé via mise en tampon de sortie
+    strictement bracketée autour de ce seul callback
+    (`inc/hotel-booking-i18n.php`, hook `mphb_sc_checkout_form` priorités
+    39/41 — le rendu à la priorité 40 exacte, rien d'autre). Vérifié en
+    direct après déploiement : `title="obligatoire"` confirmé, scan complet
+    de la page sans autre résidu anglais visible (les seules occurrences de
+    "Required"/"Book" trouvées sont des noms de propriétés JS internes, pas
+    du texte client).
+  - **Lot J (Cloudflare Turnstile)** : construit, **INACTIF** — clés pas
+    encore créées par Ilias (voir §1, Briefs ouverts). Formulaires inchangés
+    tant qu'inactif (honeypot + nonce seuls). Vérifié : soumission réelle du
+    tunnel après déploiement non bloquée (comportement attendu, Turnstile
+    absent du rendu).
+  - **Lot K (réservation #41)** : introuvable en base (`wp_posts` ET
+    `wp_postmeta`, vérifié en lecture seule, aucun résidu), aucun
+    `mphb_reserved_room` lié, pas de cron d'auto-purge MPHB actif ou
+    configuré (`mphb_remove_expired_pending_bookings` /
+    `mphb_pending_booking_lifetime` absentes). **Suppression NON TRACÉE en
+    base de production — cause NON ÉTABLIE, ne pas conclure.** Hypothèse la
+    plus probable au vu des dates (mails du 27.08 à 09h29, jour du
+    déploiement BS-T5) : un test de BS-T1 purgé sans consignation ce
+    jour-là — mais aucune preuve directe, aucun log ne permet de trancher.
+    Aucun enjeu de blocage de dates (aucune réservation `#41` n'existe
+    actuellement, quelle qu'en soit la cause).
+  - **Parcours complet rejoué après déploiement** (dates fraîches
+    15→17.10.2026, jamais utilisées avant) : tarif 185×2=370 CHF exact,
+    conditions non cochées → bloqué nativement, réservation #46 créée
+    (`pending`, run
+    [#33760486223](https://github.com/caractere-swiss/breval-wordpress/actions/runs/33760486223)),
+    2 mails reçus et lus en ~1s (français, corrects), purgée #46/#47
+    (`--force`, run
+    [#33760591020](https://github.com/caractere-swiss/breval-wordpress/actions/runs/33760591020)),
+    dates réellement libérées re-vérifiées par recherche fraîche. 6 pages
+    200 (accueil 302), `get_locale()` = fr_FR reconfirmé.
+  **Non mesuré** : rendu réel du carrousel photo en aperçu local
+  pré-déploiement (JS flexslider absent de l'aperçu statique — vérifié en
+  direct après déploiement à la place, fonctionnel) ; Turnstile en
+  conditions réelles (pas de clés Cloudflare disponibles).
 
 - 2026-09-02 — **🟢 Phase 2 (test réel du tunnel de réservation) faite — GO explicite d'Ilias, absorbe et remplace le lot H.**
   Consigne du chat Web du 02.09 : succès fonctionnel ≠ conformité d'affichage,
