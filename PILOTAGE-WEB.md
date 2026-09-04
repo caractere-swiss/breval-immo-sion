@@ -33,21 +33,26 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
   coordonnées tunnel) restent SANS protection anti-spam** au-delà du
   honeypot déjà en place — à ne pas confondre avec un lot livré/actif.
 
-**Ouvert — cause racine du rouge `qa-overflow` non résolue** (job sorti de
-`deploy.yml` le 05.09, brief BS-T1 lot M — voir entrée journal ci-dessous) :
-run manuel du 05.09 (33855756874) confirme et précise la mesure du 05.09
-matin — sur 57 contrôles, les 2 premiers (page d'accueil, 375px/768px)
-passent, **puis les 55 suivants échouent tous d'affilée**, quel que soit le
-type de page (pages rédigées indexables `/longue-duree/`, `/courte-duree/`
-comprises — pas que les pages génériques). Signature d'un seuil/blocage
-déclenché après quelques requêtes rapides depuis l'IP du runner (hébergeur
-ex2), pas un défaut de contenu ni du script. Décision Ilias du 04.09 déjà
-appliquée : job retiré de `deploy.yml`, seulement en `workflow_dispatch`
-manuel (`.github/workflows/qa-overflow.yml`) — ne tourne plus à chaque
-déploiement. Cause racine (allowlister l'IP du runner côté ex2 ? accepter
-le bruit ? lancer le contrôle ailleurs qu'en CI ?) — **à trancher par
-Ilias**, personne n'a de solution propre côté hébergeur sans y regarder de
-plus près.
+**Clos pour la CI, cause racine non identifiée (lot M-bis, 05.09)** — job
+`qa-overflow` sorti de `deploy.yml` (déjà fait, lot M), scan désormais
+seulement en `workflow_dispatch` manuel. Tentative de bridage du débit
+(lot M-bis, budget agence, brief `2.solution-web/breval-brief-BS-T1-lot-M-bis.md`) :
+pause 1,5 s entre chaque chargement de page + user-agent identifiable
+`caractere-qa-bot/1.0` (déjà séquentiel — une seule page Playwright, aucun
+parallélisme, ça ne changeait pas). Run manuel après bridage (33856728309) :
+**résultat rigoureusement identique** au run non bridé — mêmes 2 requêtes
+OK puis les 55 mêmes suivantes en échec, dans le même ordre, 0 erreur
+réseau capturée. Le bridage n'a rien changé → l'hypothèse "seuil de débit
+dépassé" ne suffit pas à expliquer le phénomène telle quelle (une vraie
+limite de débit aurait dû réagir différemment à un rythme 1,5 s/page).
+Piste alternative non vérifiée : détection de bot par empreinte du
+navigateur headless (Chromium Playwright) plutôt que par débit — un WAF/
+plugin de sécurité peut basculer en mode dégradé après 2-3 requêtes d'une
+session identifiée comme automatisée, indépendamment du rythme. **Non
+creusé plus loin, sur consigne du brief** : ne pas insister, ne pas
+contourner, ne pas demander d'allowlist à ex2 (script générique pour ~30
+sites, la bonne réponse est de rester sous le radar). Le contrôle se
+lancera depuis un poste local quand nécessaire — **dossier clos côté CI**.
 
 **Ouvert, non tranché — origine de l'alerte ACF du 16.07 :** le brief du
 04.09 partait du principe que `cc-admin` et/ou l'option `admin_email`
@@ -89,6 +94,37 @@ liens de mails (confirmation + annulation) vérifiés fonctionnels,
 > la session qui les avait produites. Le fichier canonique est **celui de ce
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
+
+- 2026-09-05 — **⚪ Lot M-bis qa-overflow — débit bridé, rouge persiste identique, dossier clos côté CI.**
+  Brief (message direct, hors fichier `_backups`) : brider `scan.mjs`
+  (concurrence, pause, user-agent) puis retester ; si toujours rouge,
+  consigner et laisser tomber le contrôle en CI (scan local à la place),
+  ne jamais demander d'allowlist à ex2. Aucun déploiement site — lot limité
+  au script de contrôle.
+  Édité `.github/scripts/qa-overflow/scan.mjs` (commit `afb800b`) : pause
+  configurable `--delay` (1500 ms par défaut) entre chaque chargement de
+  page, user-agent identifiable `--user-agent` (`caractere-qa-bot/1.0` par
+  défaut) appliqué au contexte Playwright ET aux requêtes `fetch` sitemap/
+  REST. Concurrence déjà à 1 avant modif (une seule page Playwright,
+  boucle séquentielle) — rien à changer là.
+  Run manuel après bridage (33856728309) : rouge, résultat identique au
+  run non bridé du même jour (33855756874) au détail près — mêmes 2
+  contrôles OK puis les 55 mêmes suivants en échec, même ordre, 0 erreur.
+  Le bridage n'a mesurablement rien changé.
+  MESURÉ : contenu de `scan.mjs` après édition (`node --check` syntaxe OK)
+  · run 33856728309 regardé jusqu'à complétion (`gh run watch`, job rouge,
+  "Process completed with exit code 1") · rapport JSON de ce run téléchargé
+  et comparé ligne à ligne au rapport du run précédent — séquence
+  OK/BAD identique aux 57 lignes près.
+  NON MESURÉ : cause exacte du phénomène (l'hypothèse "seuil de débit" du
+  brief n'explique pas pourquoi un ralentissement à 1,5 s/page ne change
+  rien — piste alternative non vérifiée : détection de bot par empreinte
+  du navigateur headless plutôt que par débit). Non creusé plus loin, sur
+  consigne explicite du brief.
+  Suite : aucune côté CI — dossier qa-overflow clos pour ce chantier, le
+  contrôle se lance depuis un poste local en cas de besoin. Rien à statuer
+  pour Ilias sur ce point précis.
+  HEAD prod après ce commit : `afb800b`.
 
 - 2026-09-05 — **🟡 Brief BS-T1 turnstile-ci — Lot M fait (job CI sorti en manuel), Lot N bloqué (clés absentes).**
   Brief `2.solution-web/_backups/040926b-breval-brief-BS-T1-turnstile-ci.md`.
