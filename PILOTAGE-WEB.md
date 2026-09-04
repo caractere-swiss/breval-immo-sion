@@ -33,6 +33,16 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
   coordonnées tunnel) restent SANS protection anti-spam** au-delà du
   honeypot déjà en place — à ne pas confondre avec un lot livré/actif.
 
+**Ouvert, non tranché — origine de l'alerte ACF du 16.07 :** le brief du
+04.09 partait du principe que `cc-admin` et/ou l'option `admin_email`
+pointaient encore sur `iliasfun_96@hotmail.com`. **Mesuré en direct le
+04.09 : faux** — les deux étaient déjà sur `agence@caractere.swiss`, aucune
+trace de l'adresse perso sur ces deux réglages précis. Sur consigne d'Ilias,
+pas cherché plus loin (licence ACF Pro, contact cPanel/hébergeur auraient
+été les pistes suivantes). Donc : soit déjà corrigé sans journalisation
+avant cette session (même famille que la #41 du 27.08), soit l'adresse perso
+vit ailleurs — non identifié.
+
 **Résolus depuis (ne pas rouvrir) :** ACF Pro → 6.8.7 le 12.08 ; réservation
 Lot 1 (Hotel Booking Lite) → configurée et testée le 12.08 ; cloisonnement
 des deux biens, conditions de réservation Lot 1, date Lot 2 → faits le
@@ -42,7 +52,10 @@ configuré, en retard, décision Ilias) ; réservation de test #38 → purgée l
 30.08 ; habillage CSS du tunnel de réservation (Lot I) → déployé le 03.09,
 3 surfaces, 375px + bureau vérifiés, aucun débordement ; résidu anglais
 `<abbr title="required">` sur la page coordonnées (jumeau du bug du 30.08,
-autre gabarit plugin) → corrigé le 03.09.
+autre gabarit plugin) → corrigé le 03.09 ; résidu "virement bancaire" +
+"confirmée manuellement" sur `/reservation/` → corrigés le 03.09 (relecture
+Ilias post-Lot I) ; scan liens brisés 7 pages (interne + externe) → fait le
+04.09, aucun lien cassé.
 
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
@@ -54,6 +67,36 @@ autre gabarit plugin) → corrigé le 03.09.
 > la session qui les avait produites. Le fichier canonique est **celui de ce
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
+
+- 2026-09-04 — **🟢 Passe technique pré-validation : scan liens + repointage alertes.**
+  Deux points courts, sur consigne d'Ilias.
+  - **Scan liens brisés (7 pages, interne + externe)** : tous les liens
+    testés en direct (200), y compris externes (`caractere.swiss`,
+    `edoeb.admin.ch`, `ex2.com`, `fedlex.admin.ch`) et les 3 `mailto:`.
+    Aucun lien vers Sion Tourisme ou la commune n'existe sur le site (juste
+    un commentaire de code sur la réserve taxe de séjour) — rien à scanner
+    là. `/imunify-bot-check` (403) identifié comme piège anti-bot du plugin
+    `imunify-security`, pas un lien de contenu. **Aucun lien cassé.**
+  - **Repointage admin_email / cc-admin** : mesuré en direct avant toute
+    écriture (script lecture seule,
+    [investigate-admin-email.yml](https://github.com/caractere-swiss/breval-wordpress/actions/runs/33845432073))
+    — les deux réglages étaient **déjà** sur `agence@caractere.swiss`.
+    Prémisse du brief (adresse encore sur `iliasfun_96@hotmail.com`)
+    invalidée par la mesure. **Aucune écriture faite** — rien à changer.
+    Sur consigne d'Ilias, pas de recherche plus loin (voir §1). Pas de mail
+    de confirmation à attendre puisqu'aucun changement n'a été fait.
+  **Non mesuré** : origine réelle de l'alerte ACF non reçue le 16.07 (licence
+  ACF Pro, contact cPanel — pistes non explorées sur consigne explicite).
+
+- 2026-09-03 — **🟢 `/reservation/` — 2 corrections contenu, relecture Ilias post-Lot I (`80a1e18`).**
+  Résidu "virement bancaire ou à l'arrivée" (périmètre du 12.08, contredisait
+  les conditions publiées du 20.08 — comptant à l'arrivée, sans acompte ni
+  caution) → remplacé par un texte aligné, sans préciser espèces/TWINT (Luc
+  n'a jamais tranché entre les deux). "Confirmée manuellement" (vocabulaire
+  interne, même famille que le résidu retiré le 27.08) → "manuellement"
+  retiré. Balayage des 7 pages en direct : seul `/reservation/` portait un
+  résidu virement/acompte/caution/carte — rien ailleurs. Sauvegarde →
+  déploiement → vérifié en direct, les deux textes exacts confirmés.
 
 - 2026-09-03 — **🟢 Brief habillage-tunnel déployé — Lots I/J/K, GO explicite d'Ilias, ajout Lot A-bis en cours de session.**
   Brief `2.solution-web/breval-brief-BS-T1-habillage-tunnel.md`. Ordre exécuté :
