@@ -33,6 +33,19 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
   coordonnées tunnel) restent SANS protection anti-spam** au-delà du
   honeypot déjà en place — à ne pas confondre avec un lot livré/actif.
 
+**Ouvert — job CI `qa-overflow` faussement rouge :** le job de contrôle de
+débordement (Lot N, câblé dans `deploy.yml` après chaque déploiement) échoue
+systématiquement en CI avec 55/57 "pages hors gabarit" — **faux positifs**.
+Mesuré le 05.09 : le runner GitHub Actions reçoit une réponse dépourvue du
+thème (pas de CSS, pas de header/footer) alors que le MÊME script, lancé en
+local à la même heure sur les mêmes URL, ne trouve rien d'anormal — signal
+probable de blocage/traitement différencié de l'IP du runner par la sécurité
+de l'hébergeur (même famille que le rate-limit 429 du runner déjà noté le
+30.08). `continue-on-error: true` déjà en place : ça ne bloque rien, mais le
+job reste rouge dans l'onglet Actions à chaque déploiement — à trancher
+séparément (allowlister l'IP du runner ? accepter le bruit ? lancer le
+contrôle ailleurs qu'en CI ?).
+
 **Ouvert, non tranché — origine de l'alerte ACF du 16.07 :** le brief du
 04.09 partait du principe que `cc-admin` et/ou l'option `admin_email`
 pointaient encore sur `iliasfun_96@hotmail.com`. **Mesuré en direct le
@@ -55,7 +68,13 @@ configuré, en retard, décision Ilias) ; réservation de test #38 → purgée l
 autre gabarit plugin) → corrigé le 03.09 ; résidu "virement bancaire" +
 "confirmée manuellement" sur `/reservation/` → corrigés le 03.09 (relecture
 Ilias post-Lot I) ; scan liens brisés 7 pages (interne + externe) → fait le
-04.09, aucun lien cassé.
+04.09, aucun lien cassé ; brief qa-sitemap (Lots M/N/L) → déployé le 05.09,
+noindex posé sur toutes les pages/types techniques listés par le chat
+stratégie (dont la page trouvée par Ilias, son archive, `/services/`,
+les 4 taxonomies facility, les pages de statut post-réservation, la
+catégorie par défaut), liens entrants facility retirés, tunnel rejoué et
+liens de mails (confirmation + annulation) vérifiés fonctionnels,
+0 débordement/0 page hors gabarit sur 20 URL × 3 largeurs.
 
 ## 2. Journal Claude Code
 > Chronologique inverse (le plus récent en haut).
@@ -67,6 +86,73 @@ Ilias post-Lot I) ; scan liens brisés 7 pages (interne + externe) → fait le
 > la session qui les avait produites. Le fichier canonique est **celui de ce
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
+
+- 2026-09-05 — **🟢 Brief qa-sitemap déployé — Lots M/N/L, GO explicite d'Ilias, 3 ajouts en cours de session.**
+  Brief `2.solution-web/breval-brief-BS-T1-qa-sitemap.md`, origine : Ilias a
+  trouvé à la main `/accommodation/location-courte-duree-sion/` (publique,
+  indexable, non stylée, duplique `/courte-duree/`) — six QA précédentes ne
+  l'avaient jamais vue car toutes portaient sur une liste de 7 pages écrite
+  à la main.
+  - **Lot M (inventaire réel)** : extrait depuis le sitemap (14 URL réelles,
+    dont 7 jamais testées avant : `/annulation-de-reservation/`,
+    `/confirmation-de-reservation/` + 4 sous-pages, `/resultats-de-la-
+    recherche/`) puis croisé avec les types de contenu enregistrés. Cause
+    racine : SEOPress n'inclut QUE `post`+`page` dans son sitemap
+    (`seopress_xml_sitemap_post_types_list`) — tout le reste (types de
+    plugin, taxonomies, catégories) est un angle mort structurel. 3 pages
+    Hotel Booking hors sitemap trouvées : la page room-type, son archive
+    `/accommodation/` (même type), `/services/` (archive vide,
+    `mphb_room_service`, type différent, signalé hors périmètre).
+  - **Lot N (qa-overflow-scan)** : script Playwright générique
+    (`.github/scripts/qa-overflow/`, sitemap en paramètre, réutilisable sur
+    les autres sites agence), réécrit en cours de session pour croiser
+    sitemap + API REST WordPress (`/wp-json/wp/v2/types` et `/taxonomies`)
+    plutôt que le sitemap seul — le croisement REST a trouvé
+    AUTOMATIQUEMENT la page room-type, les 4 taxonomies facility, ET une 7e
+    page jamais vue (`/category/non-classe/`, catégorie WP par défaut vide).
+    Contrôle 2 ajouté : page hors gabarit = thème/header/footer absents,
+    générique. Câblé dans `deploy.yml` après déploiement,
+    `continue-on-error: true` (jamais bloquant sans accord d'Ilias — pas
+    demandé). ⚠️ Faux positifs massifs en CI (IP du runner bloquée par la
+    sécurité de l'hébergeur) — voir §1, à trancher séparément.
+  - **Lot L (traitement)**, étendu en 2 passes supplémentaires demandées par
+    le chat stratégie avant déploiement :
+    1. `noindex` sur 8 cibles au total (`mphb_room_type` single+archive,
+       `mphb_room_service` archive, taxonomie `mphb_room_type_facility`,
+       `/annulation-de-reservation/`, `/confirmation-de-reservation/` + 4
+       sous-pages, `/resultats-de-la-recherche/`, `/category/non-classe/`
+       générique). **Fausse piste mesurée et corrigée en cours de session** :
+       le filtre core `wp_robots` semblait le bon point d'accroche (callback
+       confirmé actif, logique vérifiée correcte par simulation ET par un
+       marqueur de débogage en conditions réelles) mais SEOPress ne le lit
+       JAMAIS pour son rendu — lu dans son code source
+       (`options-titles-metas.php`) : `seopress_titles_advanced_robots_hook()`
+       construit et echo sa propre balise indépendamment, exposant son
+       propre filtre dédié `seopress_titles_robots` sur la chaîne finale.
+       Bascule sur ce filtre = correction confirmée en direct sur les 8
+       cibles, les 7 pages rédigées restant indexables.
+    2. Liens entrants vers la fiche room-type (résultats de recherche)
+       repointés vers `/courte-duree/` via `post_type_link`, ciblé sur l'ID
+       24 uniquement. Liens vers les taxonomies facility retirés via
+       override de gabarit (même mécanisme que le lot A) :
+       `hotel-booking/loop-room-type/attributes/facilities.php`.
+    3. Habillage minimal étendu au gabarit room-type (extension de portée
+       des règles Lot I, pas de composant neuf), vérifié visuellement en
+       local avant déploiement.
+    4. Page et types de contenu non supprimés.
+  - **Critère de sortie** : tunnel rejoué en entier après déploiement
+    (recherche, résultats, conditions bloquantes si décochées, réservation
+    #48 créée puis purgée `--force` avec son `mphb_reserved_room` #49) ;
+    les 2 mails reçus en ~1s montrent le lien hébergement déjà repointé vers
+    `/courte-duree/` ; le lien de confirmation
+    (`/confirmation-de-reservation/reservation-confirmee/?booking_id=...`)
+    ET un lien d'annulation construit sur la même paire booking_id/key
+    (`/annulation-de-reservation/?booking_id=...`) vérifiés fonctionnels
+    (200, contenu réel) malgré le noindex. Scan Lot N "après" (en local, le
+    job CI étant faussé) : 0 débordement, 0 page hors gabarit sur 20 URL ×
+    3 largeurs (57 contrôles).
+  **Non mesuré** : origine exacte de l'IP-blocage du runner GitHub Actions
+  (probable, pas confirmé côté hébergeur).
 
 - 2026-09-04 — **🟢 Passe technique pré-validation : scan liens + repointage alertes.**
   Deux points courts, sur consigne d'Ilias.
