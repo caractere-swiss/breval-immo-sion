@@ -20,7 +20,6 @@ coordination Claude Code → chat Web, mais tout le travail consigné au journal
 ci-dessous porte sur le site WordPress, pas sur ce brouillon.
 
 **Briefs ouverts — action Ilias, pas Claude Code :**
-- **Wizard wp-admin Complianz** (RGPD) : non scriptable, à lancer en interface.
 - **Réception `contact@breval.net`** : plusieurs mails de test envoyés depuis
   le 21.07 (formulaires + tunnel Hotel Booking), livraison inbox jamais
   confirmée par Claude Code (pas d'accès à la boîte) — filet BCC
@@ -32,6 +31,32 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
   `breval_turnstile_secret_key`), **les 3 formulaires (Lot 1, Lot 2,
   coordonnées tunnel) restent SANS protection anti-spam** au-delà du
   honeypot déjà en place — à ne pas confondre avec un lot livré/actif.
+
+**Ouvert — résidus Complianz en base, non purgés (lot O, 05.09)** : plugin
+retiré (`complianz-gdpr-premium` 7.5.7.2, désactivé + dossier supprimé),
+mais listés et volontairement laissés en l'état sur consigne du brief —
+5 tables `wp_cmplz_*`, ~28 options `cmplz_*`/`cmplz-current-version`,
+dossier `wp-content/uploads/complianz` (4.5 Mo), 4 tâches cron `cmplz_*`.
+Détail complet dans l'entrée journal ci-dessous. **Purge en base = accord
+explicite d'Ilias requis avant tout script de nettoyage.**
+
+**Ouvert — deux constats du brief Lot O à corriger/vérifier** :
+1. Le brief affirmait Complianz en **édition gratuite** ("Retour arrière...
+   réinstallable depuis wp.org") — **mesuré faux** : c'est l'édition
+   **premium** (`complianz-gdpr-premium` 7.5.7.2), déjà dans la baseline du
+   12.08 (`investigate-site-locale.sh`). Un retour arrière ne serait donc
+   pas aussi trivial que décrit si une licence était en jeu — non vérifié
+   plus loin, l'assistant n'ayant jamais tourné.
+2. Résidu **hors périmètre de Complianz**, repéré en vérifiant les labels
+   de `/reservation/` après retrait : dans le JSON de config JS du plugin
+   de réservation (Hotel Booking Lite), la clé `selectDates` porte encore
+   la valeur anglaise `"Select dates"` (les autres clés du même bloc sont
+   traduites, ex. `checkOutNotValid` en français). Placeholders visibles du
+   formulaire ("Date d'arrivée", "Date de départ") sont en français —
+   `get_locale()`/`WPLANG` inchangés fr_FR avant/après le retrait, donc
+   sans lien avec Complianz. Pas cherché si ce texte s'affiche quelque part
+   (aucune occurrence `aria-label="Select...` trouvée). Signalé, pas
+   corrigé.
 
 **Clos pour la CI, cause racine non identifiée (lot M-bis, 05.09)** — job
 `qa-overflow` sorti de `deploy.yml` (déjà fait, lot M), scan désormais
@@ -94,6 +119,54 @@ liens de mails (confirmation + annulation) vérifiés fonctionnels,
 > la session qui les avait produites. Le fichier canonique est **celui de ce
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
+
+- 2026-09-05 — **🟢 Brief BS-T1 turnstile-ci (v2) — Lot O fait (Complianz retiré, locale intacte). Lot N toujours bloqué (clés absentes).**
+  Brief `2.solution-web/breval-brief-BS-T1-turnstile-ci.md` (mis à jour le
+  04.09 avec l'ajout du lot O, section fraîcheur (ae)). GO explicite
+  d'Ilias pour ce seul lot O — lot N non touché.
+  **Mesure avant d'agir** : `wp plugin list` confirme Complianz présent —
+  slug réel `complianz-gdpr-premium` 7.5.7.2, actif (la ligne "installé,
+  wizard non exécuté" du 12.07 n'était pas périmée). Locale AVANT :
+  `WPLANG`=fr_FR, `get_locale()`=fr_FR.
+  Sauvegarde UpdraftPlus déclenchée et confirmée avant toute écriture
+  (`success:1`, run 33870703514, fichiers+thèmes+uploads+mu-plugins+db).
+  Nouveau workflow `.github/workflows/remove-complianz.yml` +
+  `.github/scripts/remove-complianz.sh` (commit `d424e36`) : désactivation
+  OK, `wp plugin delete` a échoué comme pour Wordfence le 02.09 (même
+  erreur `proc_open()`/`proc_close()` désactivés côté hébergeur), repli sur
+  suppression directe du dossier — effet équivalent, confirmé par
+  `wp plugin is-installed` (retiré). Run manuel 33870812811, vert, log
+  intégral relu.
+  Résidus listés (non purgés, sur consigne du brief) : 5 tables
+  `wp_cmplz_*`, ~28 options `cmplz_*`, dossier `wp-content/uploads/
+  complianz` (4,5 Mo), 4 tâches cron `cmplz_*` — détail dans "Ouvert" #1
+  ci-dessus.
+  **Contrôle central — locale APRÈS** : `WPLANG`=fr_FR, `get_locale()`=
+  fr_FR (inchangés). Lecture live `/reservation/?qa=<horodatage neuf>` :
+  labels visibles Arrivée/Départ/Adultes/Enfants présents, placeholders
+  "Date d'arrivée"/"Date de départ" en français, aucune trace de bannière
+  (`cmplz`/`complianz`/`cookie consent` absents du HTML rendu). Aucune
+  régression — l'écartement du 27.08 tient.
+  7 pages publiques vérifiées en HTTP 200 avec paramètre neuf (`/`,
+  `/courte-duree/`, `/longue-duree/`, `/reservation/`,
+  `/conditions-de-reservation/`, `/mentions-legales/`,
+  `/politique-de-confidentialite/`).
+  Deux constats signalés sans être corrigés (voir "Ouvert" ci-dessus) :
+  brief affirmait à tort l'édition gratuite (c'est la premium) ; résidu
+  anglais isolé `selectDates` dans le JS du plugin réservation, sans
+  rapport avec Complianz, occurrence visible non confirmée.
+  MESURÉ : wp plugin list avant/après · wp option get WPLANG avant/après ·
+  wp eval get_locale() avant/après · backup UpdraftPlus (statut brut
+  success:1) · run remove-complianz relu intégralement (log complet) ·
+  7 pages en 200 via curl avec paramètre cache-busting · contenu HTML de
+  /reservation/ inspecté pour labels et absence de bannière.
+  NON MESURÉ : si `selectDates:"Select dates"` s'affiche réellement quelque
+  part (aucun `aria-label` correspondant trouvé, pas creusé plus loin) ·
+  conséquence d'une éventuelle licence premium Complianz sur un retour
+  arrière (non applicable, assistant jamais configuré).
+  HEAD prod après ces deux commits : `d424e36`.
+  Suite : rien côté Claude Code sur ce lot. Résidus Complianz en base en
+  attente d'accord pour purge, si Ilias le souhaite.
 
 - 2026-09-05 — **⚪ Lot M-bis qa-overflow — débit bridé, rouge persiste identique, dossier clos côté CI.**
   Brief (message direct, hors fichier `_backups`) : brider `scan.mjs`
