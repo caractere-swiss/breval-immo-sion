@@ -122,6 +122,68 @@ liens de mails (confirmation + annulation) vérifiés fonctionnels,
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-09-05 — **🟢 Lot Q — bug formulaire diagnostiqué et corrigé, menu mobile complété, selectDates (3e réponse).**
+  Sauvegarde UpdraftPlus confirmée avant écriture (`success:1`, run
+  33876823437).
+  **selectDates, réponse en une ligne (déjà donnée deux fois, mal
+  transmise) : NON, ne s'affiche nulle part visible.** Seule occurrence :
+  JSON de config JS interne du plugin Hotel Booking Lite
+  (`mphb-global-js-js-extra`) sur `/reservation/`, jamais injectée dans le
+  DOM.
+  **1. Bug "Une question avant de réserver ?" — cause établie avant
+  correction.** Mesuré : ce n'est PAS un lien (`<summary>` d'un
+  `<details class="booking__fallback">`), il ne pointe nulle part.
+  Le clic ouvre bien le bon formulaire (celui de contact/question,
+  action `breval_lot1_reservation`) — **le routage n'était pas en
+  cause**. La vraie cause : les 3 premiers champs visibles à l'ouverture
+  (Arrivée/Départ/Personnes, mêmes libellés que le widget de recherche
+  MPHB) sont visuellement indiscernables de ce widget, et rien à l'écran
+  ne signale "formulaire de message" avant de faire défiler — reproduit le
+  malentendu d'Ilias. Corrigé en réordonnant les champs du template
+  (`templates/pages/page-lot-1.php`, commit `0c76e00`) : Nom/E-mail/
+  Téléphone/Message d'abord, Arrivée/Départ/Personnes ensuite (toujours
+  `required`, validation serveur `inc/forms.php:115` inchangée — un essai
+  de les rendre facultatifs a été fait puis annulé après avoir vu que le
+  handler serveur les exige, ce qui aurait cassé silencieusement les
+  envois sans dates). Mesuré APRÈS (live, mobile 375px, capture d'écran) :
+  Nom/E-mail/Téléphone/Message visibles sans défiler après ouverture.
+  **2. Menu mobile /courte-duree/ vide.** Mesuré AVANT : un seul lien
+  ("Courte durée"). Ajout de 3 liens dans `templates/parts/site-header.php`
+  (même commit) : Réserver (`/reservation/`), Conditions
+  (`/conditions-de-reservation/`), Contact (`/courte-duree/#contact`,
+  nouvel `id="contact"` posé sur `<aside class="booking">`). Ajouté
+  `scroll-margin-top: 96px` sur `.booking` (`_booking.scss`) pour que le
+  site-header sticky (~74px mesuré) ne recouvre pas le haut du bloc au
+  saut d'ancre. Mesuré APRÈS sur les 3 pages (`/courte-duree/`,
+  `/conditions-de-reservation/`, `/reservation/`, header partagé) : les 4
+  liens identiques partout, **aucun lien vers `/longue-duree/` ou la
+  colocation** — cloisonnement du 27.08 intact. Menu ouvert, capture
+  d'écran à l'appui.
+  ⚠️ **Un point non tranché, signalé plutôt que caché** : `scrollIntoView()`
+  manuel sur `#contact` fonctionne et respecte le `scroll-margin-top`
+  (atterrit à 116px, sous le header) — mais le saut natif au chargement
+  d'une URL avec `#contact` (navigation directe ou clic réel sur le lien)
+  ne déclenche AUCUN scroll dans cet environnement de test automatisé
+  (`window.scrollY` reste à 0), alors que rien en CSS/JS du site ne bloque
+  le scroll (`overflow-y: auto` partout, pas de `position: fixed`
+  résiduel). Present aussi en rejouant juste `location.hash` sur la page
+  déjà chargée. Cause probable : limite de l'outil de navigation
+  automatisé (CDP), pas un défaut du site — mais **non confirmé sur un
+  vrai téléphone**, à l'œil par Ilias au prochain contrôle mobile.
+  MESURÉ : structure DOM du `<details>` et de son contexte (`.booking__card`,
+  bouton "Vérifier les disponibilités") avant correction · ordre des champs
+  avant/après (`querySelectorAll` sur le formulaire ouvert) · capture
+  d'écran avant/après sur mobile 375px · liens du menu sur les 3 pages
+  (texte + `href` exacts) · capture d'écran du menu ouvert · géométrie
+  `#contact` vs header (`getBoundingClientRect`) · `php -l` sur les 2
+  fichiers PHP modifiés · `npm run build` avant chaque push.
+  NON MESURÉ : comportement réel du saut d'ancre `#contact` sur un
+  navigateur/téléphone non automatisé (signalé ci-dessus, pas caché).
+  Suite : dernier lot du chantier, comme annoncé — clos côté technique une
+  fois ce rapport transmis, sous réserve du point `#contact` à l'œil sur
+  téléphone réel.
+  HEAD prod après ce commit : `0c76e00`.
+
 - 2026-09-05 — **🟢 Lot P — deux corrections visuelles déployées, mesurées avant/après. selectDates re-confirmé.**
   Ilias, contrôle mobile, priorité (bloque l'envoi au client). Sauvegarde
   UpdraftPlus déclenchée et confirmée avant écriture (`success:1`, run
