@@ -25,22 +25,25 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
   confirmée par Claude Code (pas d'accès à la boîte) — filet BCC
   `agence@caractere.swiss` posé le 30.08 (voir journal BS-T1), 2 mails de
   test frais envoyés le 30.08 à vérifier côté webmail par Ilias.
-- **Cloudflare Turnstile (Lot J, 03.09)** : code posé, **INACTIF** — clés
-  site/secrète pas encore créées par Ilias. ⚠️ Tant que les clés ne sont pas
+- **Cloudflare Turnstile (Lot J, 03.09)** : code posé, **TOUJOURS INACTIF**
+  au 05.09 (message annonçant les clés posées en secrets GitHub — **mesuré
+  faux**, voir entrée journal ci-dessous). ⚠️ Tant que les clés ne sont pas
   posées (`wp-config.php` ou options `breval_turnstile_site_key` /
   `breval_turnstile_secret_key`), **les 3 formulaires (Lot 1, Lot 2,
   coordonnées tunnel) restent SANS protection anti-spam** au-delà du
   honeypot déjà en place — à ne pas confondre avec un lot livré/actif.
 
-**Ouvert — résidus Complianz en base, non purgés (lot O, 05.09)** : plugin
-retiré (`complianz-gdpr-premium` 7.5.7.2, désactivé + dossier supprimé),
-mais listés et volontairement laissés en l'état sur consigne du brief —
-5 tables `wp_cmplz_*`, ~28 options `cmplz_*`/`cmplz-current-version`,
-dossier `wp-content/uploads/complianz` (4.5 Mo), 4 tâches cron `cmplz_*`.
-Détail complet dans l'entrée journal ci-dessous. **Purge en base = accord
-explicite d'Ilias requis avant tout script de nettoyage.**
+**Ouvert — résidus Complianz en base, non purgés (lot O, 05.09 — cron purgé le
+05.09 en session suivante)** : plugin retiré (`complianz-gdpr-premium`
+7.5.7.2, désactivé + dossier supprimé). Restent, volontairement, sur
+consigne explicite (accord donné pour le cron seulement, pas le reste) :
+5 tables `wp_cmplz_*`, 33 options `cmplz_*`/`cmplz-current-version`,
+dossier `wp-content/uploads/complianz` (4.5 Mo). Les 4 tâches cron
+`cmplz_*` (seul résidu couvert par l'accord) sont purgées — détail dans
+l'entrée journal ci-dessous. **Purge du reste en base = accord explicite
+d'Ilias requis avant tout script de nettoyage.**
 
-**Ouvert — deux constats du brief Lot O à corriger/vérifier** :
+**Résolu — deux constats du brief Lot O** :
 1. Le brief affirmait Complianz en **édition gratuite** ("Retour arrière...
    réinstallable depuis wp.org") — **mesuré faux** : c'est l'édition
    **premium** (`complianz-gdpr-premium` 7.5.7.2), déjà dans la baseline du
@@ -50,13 +53,12 @@ explicite d'Ilias requis avant tout script de nettoyage.**
 2. Résidu **hors périmètre de Complianz**, repéré en vérifiant les labels
    de `/reservation/` après retrait : dans le JSON de config JS du plugin
    de réservation (Hotel Booking Lite), la clé `selectDates` porte encore
-   la valeur anglaise `"Select dates"` (les autres clés du même bloc sont
-   traduites, ex. `checkOutNotValid` en français). Placeholders visibles du
-   formulaire ("Date d'arrivée", "Date de départ") sont en français —
-   `get_locale()`/`WPLANG` inchangés fr_FR avant/après le retrait, donc
-   sans lien avec Complianz. Pas cherché si ce texte s'affiche quelque part
-   (aucune occurrence `aria-label="Select...` trouvée). Signalé, pas
-   corrigé.
+   la valeur anglaise `"Select dates"`. **Mesuré le 05.09 (session
+   suivante) : ne s'affiche NULLE PART visible** — HTML statique, DOM après
+   ouverture du calendrier (`/reservation/?qa=1788524000`) inspectés,
+   trouvé uniquement dans le blob JSON `mphb-global-js-js-extra`, jamais
+   injecté dans le rendu. Calendrier ouvert entièrement en français
+   ("Préc/Aujourd'hui/Suiv", jours, mois). Dossier clos, rien à corriger.
 
 **Clos pour la CI, cause racine non identifiée (lot M-bis, 05.09)** — job
 `qa-overflow` sorti de `deploy.yml` (déjà fait, lot M), scan désormais
@@ -119,6 +121,70 @@ liens de mails (confirmation + annulation) vérifiés fonctionnels,
 > la session qui les avait produites. Le fichier canonique est **celui de ce
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
+
+- 2026-09-05 — **🟡 Dernier lot — Turnstile toujours bloqué (prémisse fausse), cron cmplz_* purgé, selectDates mesuré invisible.**
+  🔴 **NOTE TECHNIQUE DURABLE, au-delà de Bréval** : sur cet hébergeur (ex2,
+  hôte `frawp16.ex2.cloud`), `proc_open()`/`proc_close()` sont désactivés
+  côté PHP → **`wp plugin delete` ET `wp plugin uninstall` échouent
+  systématiquement** (WP-CLI a besoin de relancer un sous-processus
+  "launch" pour ces deux commandes, peu importe le plugin). Constaté deux
+  fois identiquement : Wordfence le 02.09, Complianz le 05.09. Repli
+  systématique : `wp plugin deactivate` + suppression directe du dossier
+  (`rm -rf`) — effet fichier équivalent, MAIS **`uninstall.php` du plugin
+  ne s'exécute jamais**, donc **tout retrait de plugin sur cet hébergeur
+  laisse des résidus en base par construction** (tables, options, cron —
+  jamais nettoyés automatiquement). À anticiper, pas à découvrir à chaque
+  fois : sur ex2, prévoir d'emblée une étape de résidus dans tout brief de
+  retrait de plugin, ne pas compter sur `wp plugin delete` pour un
+  nettoyage propre.
+  **Lot N (Turnstile)** — message annonçait les clés posées en secrets
+  GitHub. **Mesuré faux** : `gh secret list` sur `breval-wordpress` ne
+  montre toujours que `ACF_PRO_KEY`/`SSH_PRIVATE_KEY` ; vérifié aussi les
+  deux autres chemins prévus par le code (`inc/turnstile.php`) — aucune
+  constante `BREVAL_TURNSTILE_*` dans `wp-config.php`, options
+  `breval_turnstile_site_key`/`secret_key` de longueur 0,
+  `breval_turnstile_is_active()` renvoie `false` en direct (run
+  `investigate-turnstile-keys.yml`, 33873041059, commit `9ed2cd6`). Arrêté
+  ici, rien activé, rien testé (activer sans clé n'aurait rien à tester) —
+  conforme à la consigne "si un constat ne se vérifie pas, ne l'exécute
+  pas, signale-le".
+  **Purge cron cmplz_*** (seule purge autorisée, périmètre strict — tables/
+  options/uploads explicitement épargnés) : sauvegarde UpdraftPlus
+  déclenchée et confirmée avant écriture (`success:1`, run 33873484206).
+  Nouveau workflow `.github/workflows/purge-complianz-cron.yml` + script
+  (commit `94e83cd`). Constat en cours de run :
+  `cmplz_every_five_minutes_hook` avait déjà disparu tout seul entre le
+  lot O et ce run (dernière occurrence tirée, jamais reprogrammée, plugin
+  absent) — `wp cron event delete` dessus a renvoyé "Invalid cron event"
+  (attendu, rien à corriger). Les 3 autres (`every_week`, `every_day`,
+  `every_month`) supprimés explicitement, confirmés. Après coup : 0
+  événement `cmplz_*` restant, 5 tables `wp_cmplz_*` toujours présentes,
+  dossier uploads toujours présent, 33 options `cmplz_*` toujours
+  présentes (décompte exact via `wc -l`, la précédente estimation "~28"
+  était approximative) — rien d'autre touché, confirmé par contrôle dans
+  le même run.
+  **Résidu `selectDates`** (signalé sans être corrigé le 05.09 précédent) :
+  mesure demandée — s'affiche-t-il en live ? **Non.** Navigateur avec JS
+  sur `/reservation/?qa=1788524000` : texte de page complet lu (aucune
+  occurrence), calendrier ouvert par clic réel sur le champ date (screenshot
+  à l'appui) — entièrement en français ("Préc / Aujourd'hui / Suiv",
+  jours/mois), aucune trace de "Select dates" dans le DOM rendu même après
+  interaction. Cherché uniquement dans `document.body.innerHTML` : présent
+  une seule fois, dans le blob JSON `mphb-global-js-js-extra` (config JS du
+  plugin Hotel Booking Lite), jamais consommé par un élément visible.
+  Dossier clos, aucune correction nécessaire.
+  MESURÉ : gh secret list · grep wp-config.php · longueur options Turnstile
+  via wp eval · breval_turnstile_is_active() en direct · backup UpdraftPlus
+  (success:1) · log complet du run de purge cron relu par appel séparé ·
+  tables/dossier/décompte d'options après purge · page /reservation/ lue
+  en DOM (texte + HTML + interaction calendrier réelle, capture d'écran).
+  NON MESURÉ : néant — les points de ce message sont tous mesurés,
+  Turnstile explicitement non testé puisque non activable (pas de clé).
+  Suite : **aucune, chantier clos côté technique sur consigne explicite.**
+  Ne rien ouvrir de plus ici — décisions qui restent à Ilias : poser les
+  vraies clés Turnstile pour ce lot un jour, et statuer sur les résidus
+  Complianz restants (tables/options/uploads) si besoin un jour.
+  HEAD prod après ces deux commits : `94e83cd`.
 
 - 2026-09-05 — **🟢 Brief BS-T1 turnstile-ci (v2) — Lot O fait (Complianz retiré, locale intacte). Lot N toujours bloqué (clés absentes).**
   Brief `2.solution-web/breval-brief-BS-T1-turnstile-ci.md` (mis à jour le
