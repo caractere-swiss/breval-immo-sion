@@ -122,6 +122,67 @@ liens de mails (confirmation + annulation) vérifiés fonctionnels,
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-09-05 — **🟢 Lot P — deux corrections visuelles déployées, mesurées avant/après. selectDates re-confirmé.**
+  Ilias, contrôle mobile, priorité (bloque l'envoi au client). Sauvegarde
+  UpdraftPlus déclenchée et confirmée avant écriture (`success:1`, run
+  33875297217).
+  **1. Tunnel — chiffres illisibles du sélecteur Adultes/Enfants.** Mesuré
+  AVANT (mobile 375px, `/reservation/`) : `select[name=mphb_adults]` et
+  `mphb_children` en **15px** (le CSS de motopress-hotel-booking-lite
+  impose `93.75%`, soit 15px sur une base 16px — notre thème utilisait
+  `font: inherit`, qui laissait passer cette valeur). Sous 16px, iOS
+  déclenche un zoom automatique au toucher en plus de l'illisibilité.
+  Ajout de `font-size: 16px` explicite (après `font: inherit`, pour garder
+  la famille/graisse héritées) sur les 4 blocs select/input du tunnel dans
+  `assets/scss/components/_hotel-booking.scss` (commit `447926a`) — CSS
+  dans le thème, jamais dans le plugin. Mesuré APRÈS (même page, même
+  viewport, paramètre neuf) : **16px** sur `mphb_adults`, `mphb_children`,
+  et les deux champs date (`mphb_check_in_date`/`mphb_check_out_date`).
+  **2. Titres de section collés à leur liste.** Mesuré AVANT
+  (`/courte-duree/`) : `.prose h3` ("En bref", "Les équipements", "Le
+  quartier", "Conditions de réservation") à **0px** de margin-bottom (le
+  reset global met tous les titres à `margin:0`, seul `margin-top` était
+  réajouté). Ajout de `margin-bottom: 0.75rem` sur `.prose h3`
+  (`assets/scss/layouts/_sections.scss`, commit `447926a`). Mesuré APRÈS :
+  **12px** sur les 4 titres.
+  ⚠️ **Écart avec le brief, signalé avant de continuer** : les titres cités
+  par Ilias ("Les équipements", "En bref", "Conditions de réservation")
+  n'existent que sur `/courte-duree/` (page-lot-1.php) — `/longue-duree/`
+  (page-lot-2.php) n'a AUCUN de ces trois titres. Vérifié quand même le
+  même type de bug sur `/longue-duree/` : trouvé sur un `<h2>` cette fois
+  ("Parties communes", `.prose h2`, immédiatement suivi de
+  `<ul class="features">`), 0px de margin-bottom, même cause. Étendu le
+  fix à `.prose h2` (commit `52b340d`, second déploiement,
+  33875698400) — même valeur 0.75rem, cohérent avec h3. Mesuré APRÈS sur
+  `/longue-duree/` : **12px** sur "L'appartement" et "Parties communes".
+  **Alignement des deux colonnes** (`.layout-2col`, desktop 1280px) :
+  vérifié sur les deux pages via `getBoundingClientRect()` — `.prose` et la
+  colonne latérale (`.booking` / `.contact`) démarrent au même `top` avant
+  et après les deux déploiements (`align-items: start`, colonnes
+  indépendantes en hauteur, jamais accroché à la même grille de lignes) —
+  aucune casse.
+  **selectDates — réponse donnée mais pas lue la dernière fois, redonnée
+  ici explicitement** : **NON**, ne s'affiche nulle part visible pour un
+  visiteur. Mesuré le 05.09 (session précédente) sur
+  `https://breval.net/reservation/?qa=1788524000` avec un navigateur JS
+  (pas un simple curl) : texte de page complet lu, calendrier ouvert par
+  clic réel sur le champ date arrivée (capture d'écran à l'appui) —
+  entièrement en français. La seule occurrence de `"selectDates":"Select
+  dates"` est dans le blob JSON `mphb-global-js-js-extra` (config JS
+  interne du plugin Hotel Booking Lite, chargé sur `/reservation/`),
+  jamais injectée dans le DOM rendu, avant ou après interaction.
+  MESURÉ : font-size AVANT/APRÈS des 2 selects + 2 inputs date du tunnel
+  (mobile 375px, live) · margin-bottom AVANT/APRÈS des `.prose h3` sur
+  `/courte-duree/` et des `.prose h2` sur `/longue-duree/` (live) ·
+  géométrie des deux colonnes avant/après sur les deux pages (desktop
+  1280px, `getBoundingClientRect`) · build local (`npm run build`) avant
+  chaque push pour vérifier la compilation SCSS · logs des deux runs de
+  déploiement relus.
+  NON MESURÉ : néant.
+  Suite : aucune, chantier clos. Rapport détaillé chiffré transmis à
+  Ilias avec les deux paires avant/après.
+  HEAD prod après ces trois commits : `52b340d`.
+
 - 2026-09-05 — **🟡 Dernier lot — Turnstile toujours bloqué (prémisse fausse), cron cmplz_* purgé, selectDates mesuré invisible.**
   🔴 **NOTE TECHNIQUE DURABLE, au-delà de Bréval** : sur cet hébergeur (ex2,
   hôte `frawp16.ex2.cloud`), `proc_open()`/`proc_close()` sont désactivés
