@@ -122,6 +122,62 @@ liens de mails (confirmation + annulation) vérifiés fonctionnels,
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
 
+- 2026-09-05 — **🟢 Lot R — dernier lot du chantier. Calendrier mobile corrigé, selectDates traduit.**
+  Sauvegarde UpdraftPlus confirmée avant écriture (`success:1`, run
+  33878691285).
+  **1. Débordement du calendrier sur iPhone.** Cause mesurée avant
+  correction : `.mphb-datepick-popup` (jQuery Datepick,
+  `vendors/kbwood/datepick` du plugin) reçoit une largeur posée EN LIGNE
+  par le JS du plugin — `width: 435px` constaté en live (2 panneaux de
+  216px, aucune media query mobile côté plugin). `window.innerWidth`
+  passait lui-même à 435 au moment de l'ouverture (le layout viewport
+  s'étirait pour accueillir le popup non contraint) — signature exacte du
+  débordement décrit par Ilias. Corrigé en CSS pur dans le thème
+  (`assets/scss/components/_hotel-booking.scss`, commit `4595c22`) :
+  `max-width: 220px` sous 768px (`max-width` en feuille de style écrase
+  toujours une largeur posée en ligne, sans `!important`) + second panneau
+  masqué (`:not(.first)`). Mesuré APRÈS, live sur `/reservation/` à
+  375px : popup à **220px**, bord droit à 269px (dans l'écran),
+  `scrollWidthDoc`/`innerWidth` revenus à 375 — capture d'écran à l'appui,
+  un seul mois affiché, aucune coupure.
+  **2. selectDates traduit.** Origine confirmée en lisant le code source du
+  plugin (diagnostic lecture seule, run 33878528106) :
+  `includes/script-managers/public-script-manager.php:230`,
+  `__( 'Select dates', 'motopress-hotel-booking' )` — vrai text domain,
+  donc filtrable par `gettext_motopress-hotel-booking` sans toucher au
+  plugin (contrairement au résidu déjà traité dans le même fichier
+  `inc/hotel-booking-i18n.php`, qui lui n'avait aucun `__()` du tout).
+  Pack fr_FR du plugin présent sur le serveur (129 langues, dont
+  `motopress-hotel-booking-fr_FR.mo/.po`) mais ne couvre pas cette chaîne
+  précise — gap côté Motopress, pas un fichier manquant. Ajouté le filtre
+  (commit `a41de9c`) : "Select dates" → "Choisissez vos dates". Mesuré
+  APRÈS, live : `MPHB._data.translations.selectDates` = "Choisissez vos
+  dates".
+  **Autres chaînes du même objet de traduction, listées sans être
+  inventées** (objet complet capturé en direct sur `/reservation/`, toutes
+  les autres clés) : déjà en français à l'exception de deux emprunts
+  d'usage courant en hôtellerie française — `notCheckIn` ("Pas de
+  check-in") et `notCheckOut` ("Pas de check-out") — volontairement PAS
+  traduits (pas un oubli comparable à "Select dates", une convention de
+  registre). Aucune autre chaîne anglaise trouvée dans l'objet.
+  MESURÉ : géométrie du popup datepicker avant/après (`getBoundingClientRect`,
+  `window.innerWidth`, `document.documentElement.scrollWidth`) · capture
+  d'écran calendrier ouvert à 375px après déploiement · code source PHP du
+  plugin (`grep` via SSH, lecture seule) pour l'origine exacte de
+  `selectDates` · objet `MPHB._data.translations` complet capturé en live
+  avant et après pour repérer toute autre chaîne anglaise · `npm run
+  build` avant chaque push · `php -l` sur le fichier PHP modifié.
+  NON MESURÉ : comportement du calendrier au-dessus de 768px après le
+  déploiement (non revérifié en live faute de rendu du panneau navigateur
+  au moment du contrôle — la media query `max-width: 767.98px` est
+  standard, aucune raison technique de douter du desktop, mais pas
+  formellement revérifié ce lot-ci).
+  Suite : **dernier lot annoncé par Ilias — chantier clos côté technique.**
+  Rien à ouvrir de plus ; les deux points restés ouverts plus haut
+  (résidus Complianz en base, comportement natif de l'ancre `#contact`)
+  restent en l'état, à la main d'Ilias s'il souhaite y revenir.
+  HEAD prod après ces deux commits : `a41de9c`.
+
 - 2026-09-05 — **🟢 Lot Q — bug formulaire diagnostiqué et corrigé, menu mobile complété, selectDates (3e réponse).**
   Sauvegarde UpdraftPlus confirmée avant écriture (`success:1`, run
   33876823437).
