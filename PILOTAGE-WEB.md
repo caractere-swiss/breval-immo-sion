@@ -33,18 +33,21 @@ ci-dessous porte sur le site WordPress, pas sur ce brouillon.
   coordonnées tunnel) restent SANS protection anti-spam** au-delà du
   honeypot déjà en place — à ne pas confondre avec un lot livré/actif.
 
-**Ouvert — job CI `qa-overflow` faussement rouge :** le job de contrôle de
-débordement (Lot N, câblé dans `deploy.yml` après chaque déploiement) échoue
-systématiquement en CI avec 55/57 "pages hors gabarit" — **faux positifs**.
-Mesuré le 05.09 : le runner GitHub Actions reçoit une réponse dépourvue du
-thème (pas de CSS, pas de header/footer) alors que le MÊME script, lancé en
-local à la même heure sur les mêmes URL, ne trouve rien d'anormal — signal
-probable de blocage/traitement différencié de l'IP du runner par la sécurité
-de l'hébergeur (même famille que le rate-limit 429 du runner déjà noté le
-30.08). `continue-on-error: true` déjà en place : ça ne bloque rien, mais le
-job reste rouge dans l'onglet Actions à chaque déploiement — à trancher
-séparément (allowlister l'IP du runner ? accepter le bruit ? lancer le
-contrôle ailleurs qu'en CI ?).
+**Ouvert — cause racine du rouge `qa-overflow` non résolue** (job sorti de
+`deploy.yml` le 05.09, brief BS-T1 lot M — voir entrée journal ci-dessous) :
+run manuel du 05.09 (33855756874) confirme et précise la mesure du 05.09
+matin — sur 57 contrôles, les 2 premiers (page d'accueil, 375px/768px)
+passent, **puis les 55 suivants échouent tous d'affilée**, quel que soit le
+type de page (pages rédigées indexables `/longue-duree/`, `/courte-duree/`
+comprises — pas que les pages génériques). Signature d'un seuil/blocage
+déclenché après quelques requêtes rapides depuis l'IP du runner (hébergeur
+ex2), pas un défaut de contenu ni du script. Décision Ilias du 04.09 déjà
+appliquée : job retiré de `deploy.yml`, seulement en `workflow_dispatch`
+manuel (`.github/workflows/qa-overflow.yml`) — ne tourne plus à chaque
+déploiement. Cause racine (allowlister l'IP du runner côté ex2 ? accepter
+le bruit ? lancer le contrôle ailleurs qu'en CI ?) — **à trancher par
+Ilias**, personne n'a de solution propre côté hébergeur sans y regarder de
+plus près.
 
 **Ouvert, non tranché — origine de l'alerte ACF du 16.07 :** le brief du
 04.09 partait du principe que `cc-admin` et/ou l'option `admin_email`
@@ -86,6 +89,34 @@ liens de mails (confirmation + annulation) vérifiés fonctionnels,
 > la session qui les avait produites. Le fichier canonique est **celui de ce
 > repo** — toute écriture passe désormais par un commit `docs(pilotage):`,
 > jamais par un fichier kDrive isolé.
+
+- 2026-09-05 — **🟡 Brief BS-T1 turnstile-ci — Lot M fait (job CI sorti en manuel), Lot N bloqué (clés absentes).**
+  Brief `2.solution-web/_backups/040926b-breval-brief-BS-T1-turnstile-ci.md`.
+  **Lot N (Turnstile)** : vérifié `gh secret list` sur `breval-wordpress` —
+  seuls `ACF_PRO_KEY` et `SSH_PRIVATE_KEY` existent, aucun secret Turnstile.
+  Conforme au brief ("ce lot ne démarre QUE lorsque Ilias a posé les clés") —
+  non démarré, rien à activer.
+  **Lot M (job CI qa-overflow)** : job retiré de `deploy.yml` (commit
+  `214da4d`), porté dans `.github/workflows/qa-overflow.yml`,
+  `workflow_dispatch` uniquement, script intact. Run manuel exécuté
+  (33855756874) : rouge, cause mesurée et consignée (voir entrée "Ouvert —
+  cause racine..." ci-dessus) — conforme au critère de sortie du brief
+  ("rouge avec cause mesurée" est un résultat accepté, pas un blocage).
+  ⚠️ **Autocorrection en session** : premier commit (`214da4d`) portait un
+  commentaire de cause erroné ("pages volontairement hors gabarit") écrit
+  avant lecture du rapport JSON détaillé — corrigé par un second commit
+  (`d42c15f`) après avoir vu que des pages rédigées indexables
+  (`/longue-duree/`, `/courte-duree/`) étaient aussi touchées. Aucun autre
+  fichier concerné par l'erreur.
+  MESURÉ : `gh secret list` (2 secrets, aucun Turnstile) · contenu de
+  `deploy.yml` après édition (job qa-overflow absent) · run manuel
+  33855756874 regardé jusqu'à complétion (`gh run watch`, exit code 1) ·
+  rapport JSON de ce run téléchargé et inspecté (57 contrôles, 2 OK puis 55
+  BAD consécutifs, tous types de page).
+  NON MESURÉ : cause racine exacte du blocage réseau côté ex2 (403 / rate
+  limit Imunify / autre) — hors périmètre du brief, à investiguer séparément
+  si Ilias le décide.
+  HEAD prod après ces deux commits : `d42c15f`.
 
 - 2026-09-05 — **🟢 Brief qa-sitemap déployé — Lots M/N/L, GO explicite d'Ilias, 3 ajouts en cours de session.**
   Brief `2.solution-web/breval-brief-BS-T1-qa-sitemap.md`, origine : Ilias a
